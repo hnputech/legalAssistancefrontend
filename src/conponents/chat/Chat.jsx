@@ -19,6 +19,8 @@ import Select from "@mui/material/Select";
 
 import bot from "../../assets/bot.svg";
 import user from "../../assets/user.svg";
+import sualbot from "../../assets/saulbot.svg";
+
 import { chats } from "../../requests/chats";
 
 // "Explain things like you would to a 10 year old learning how to co de."
@@ -29,18 +31,23 @@ const systemMessage = {
     "you are the experience lawyer having 10 years in the field your job is to help and guid people  ",
 };
 
-const names = ["Equall/Saul-Instruct-v1", "AdaptLLM/law-chat"];
+const modellist = [
+  { name: "Equall/Saul-Instruct-v1", icon: sualbot },
+  { name: "AdaptLLM/law-chat", icon: bot },
+];
 export const Chat = () => {
   const [messages, setMessages] = useState([
     {
       message: "Hello, I'm Law GPT! Ask me anything!",
       sentTime: "just now",
-      sender: "lawgtp",
+      sender: "Equall/Saul-Instruct-v1",
     },
   ]);
   const [isTyping, setIsTyping] = useState(false);
 
-  const [model, setModel] = useState(names[0]);
+  const [model, setModel] = useState(modellist[0].name);
+
+  // const botimg = model === modellist[0].name ? sualbot : bot;
 
   const handleChange = (event) => {
     const {
@@ -74,7 +81,10 @@ export const Chat = () => {
 
     let apiMessages = chatMessages.map((messageObject) => {
       let role = "";
-      if (messageObject.sender === "lawgtp") {
+      if (
+        messageObject.sender === "Equall/Saul-Instruct-v1" ||
+        messageObject.sender === "AdaptLLM/law-chat"
+      ) {
         role = "assistant";
       } else {
         role = "user";
@@ -87,7 +97,7 @@ export const Chat = () => {
     // determine how we want chatGPT to act.
     const apiRequestBody = {
       chat:
-        model === names[0]
+        model === modellist[0].name
           ? [
               ...apiMessages.slice(1), // The messages from our chat with ChatGPT
             ]
@@ -98,15 +108,12 @@ export const Chat = () => {
       model: model,
     };
 
-    console.log("====apiRequestBody", apiRequestBody);
-
     const data = await chats(apiRequestBody);
-    console.log("data", data);
     setMessages([
       ...chatMessages,
       {
         message: data[0].content,
-        sender: "lawgtp",
+        sender: model,
       },
     ]);
     setIsTyping(false);
@@ -139,13 +146,28 @@ export const Chat = () => {
               onChange={handleChange}
               input={<OutlinedInput label="Chat model" />}
             >
-              {names.map((name) => (
-                <MenuItem
-                  key={name}
-                  value={name}
-                  //   style={getStyles(name, personName, theme)}
-                >
-                  {name}
+              {modellist.map((item) => (
+                <MenuItem key={item.name} value={item.name}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Avatar
+                      name="test"
+                      src={item.icon}
+                      style={{
+                        display: "inline-block",
+                        width: "25px",
+                        minWidth: "25px",
+                        height: "25px",
+                        minHeight: "25px",
+                        marginRight: "5px",
+                      }}
+                    />{" "}
+                    <span>{item.name}</span>{" "}
+                  </div>
                 </MenuItem>
               ))}
             </Select>
@@ -157,11 +179,18 @@ export const Chat = () => {
           <MessageList
             scrollBehavior="smooth"
             typingIndicator={
-              isTyping ? <TypingIndicator content="lawgtp is typing" /> : null
+              isTyping ? (
+                <TypingIndicator
+                  content={
+                    model === modellist[0].name
+                      ? "Sual Ai is typing "
+                      : "Adapt model is typing "
+                  }
+                />
+              ) : null
             }
           >
             {messages.map((message, i) => {
-              console.log(message);
               // Determine if the current message is the last one from the same user in a sequence
               const showAvatar =
                 i === messages.length - 1 ||
@@ -173,15 +202,30 @@ export const Chat = () => {
                   model={message}
                   style={{
                     marginLeft:
-                      message.sender === "lawgtp" && !showAvatar ? "50px" : "",
+                      (message.sender === "Equall/Saul-Instruct-v1" ||
+                        message.sender === "AdaptLLM/law-chat") &&
+                      !showAvatar
+                        ? "50px"
+                        : "",
                     marginRight:
-                      message.sender !== "lawgtp" && !showAvatar ? "50px" : "",
+                      (message.sender === "Equall/Saul-Instruct-v1" ||
+                        message.sender === "AdaptLLM/law-chat") &&
+                      !showAvatar
+                        ? "50px"
+                        : "",
+                    marginTop: "10px",
                   }}
                 >
                   {showAvatar && (
                     <Avatar
                       name={message.sender}
-                      src={message.sender === "lawgtp" ? bot : user}
+                      src={
+                        message.sender === "Equall/Saul-Instruct-v1"
+                          ? sualbot
+                          : message.sender === "AdaptLLM/law-chat"
+                          ? bot
+                          : user
+                      }
                     />
                   )}
                 </Message>
