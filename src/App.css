@@ -58,3 +58,63 @@
     width: 1440px;
   }
 }
+
+.message {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.pdf-thumbnail {
+  width: 50px;
+  height: 50px;
+  /* border: 2px solid #ccc; */
+  /* border-radius: 5px; */
+  margin-right: 10px;
+  display: flex;
+}
+
+.pdf-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.pdf-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.pdf-title {
+  font-weight: bold;
+  margin: 0;
+}
+
+.pdf-size {
+  margin: 0;
+  color: #666;
+}
+
+.charHistoryheading {
+  padding-top: 12.5px;
+  padding-bottom: 12.5px;
+  text-align: center;
+}
+
+@media screen and (max-width: 580px) {
+  .charHistoryheading {
+    font-size: medium;
+    padding-top: 25px;
+    padding-bottom: 25px;
+  }
+}
+
+.chatHeading {
+  padding-left: 20px;
+  margin: 0;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.chatHeading:hover {
+  background-color: azure;
+}
