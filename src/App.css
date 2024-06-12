@@ -96,8 +96,8 @@
 }
 
 .charHistoryheading {
-  padding-top: 12.5px;
-  padding-bottom: 12.5px;
+  padding-top: 6.5px;
+  padding-bottom: 6.5px;
   text-align: center;
 }
 
@@ -117,4 +117,8 @@
 }
 .chatHeading:hover {
   background-color: azure;
+}
+
+.css-4t3x6l-MuiPaper-root-MuiDrawer-paper {
+  width: 300px;
 }

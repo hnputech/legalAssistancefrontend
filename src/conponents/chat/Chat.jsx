@@ -1,5 +1,9 @@
 import { useRef, useState, useEffect } from "react";
 import axios from "axios";
+import SwipeableDrawer from "@mui/material/SwipeableDrawer";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import MenuIcon from "@mui/icons-material/Menu";
+import IconButton from "@mui/material/IconButton";
 
 import {
   MainContainer,
@@ -25,6 +29,7 @@ import sualbot from "../../assets/saulbot.svg";
 import pdf from "../../assets/pdf.svg";
 
 import { chats } from "../../requests/chats";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 // "Explain things like you would to a 10 year old learning how to co de."
 const systemMessage = {
@@ -51,7 +56,7 @@ export const Chat = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
-  const [model, setModel] = useState(modellist[0].name);
+  const [model, setModel] = useState("");
   const [userName, setUserName] = useState("");
   const [isFileUpload, setIsFileUpload] = useState(false);
 
@@ -59,6 +64,11 @@ export const Chat = () => {
 
   const fileInputRef = useRef(null);
   const hasRunRef = useRef(false);
+  const ismobile = useIsMobile();
+
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const userId = urlParams.get("user");
 
   const getUserData = async (userName) => {
     try {
@@ -119,16 +129,9 @@ export const Chat = () => {
   }, [threadId]);
   useEffect(() => {
     console.log("ye wala");
-    // Get the query string from the URL
-    const queryString = window.location.search;
-
-    // Parse the query string to get the value of the 'queryParam' parameter
-    const urlParams = new URLSearchParams(queryString);
-    const queryParam = urlParams.get("user");
-
     const fetchData = async () => {
       try {
-        const result = await getUserData(queryParam);
+        const result = await getUserData(userId);
         setUserData(result);
       } catch (error) {
         console.log(error.message);
@@ -218,9 +221,6 @@ export const Chat = () => {
     // const query = { query: chatMessages[chatMessages.length - 1].message };
 
     try {
-      const queryString = window.location.search;
-      const urlParams = new URLSearchParams(queryString);
-      const userId = urlParams.get("user");
       const response = await axios.post(
         "http://localhost:3001/chat",
         {
@@ -251,15 +251,7 @@ export const Chat = () => {
       }
 
       // for testing
-
-      // Get the query string from the URL
-      const queryStrin = window.location.search;
-
-      // Parse the query string to get the value of the 'queryParam' parameter
-      const urlParam = new URLSearchParams(queryStrin);
-      const queryPara = urlParam.get("user");
-
-      const myresult = await getUserData(queryPara);
+      const myresult = await getUserData(userId);
       setUserData(myresult);
 
       // testing end
@@ -304,13 +296,7 @@ export const Chat = () => {
     }
     formData.append("threadId", threadId);
     formData.append("assitanceId", userData.assistenceid);
-    // formData.append("userId", userId);
-
-    // formData.append("uploaded_file", selectedFile);
-
-    // const userData = userName;
-
-    // formData.append("userId", userData);
+    formData.append("userId", userId);
 
     setIsUploading(true);
     try {
@@ -324,32 +310,38 @@ export const Chat = () => {
         }
       );
 
+      console.log("========response", response);
+
       setIsFileUpload(true);
-      const filesize = response.data.size / 1000;
-      const unit = filesize >= 1000 ? "MB" : "KB";
-      const divider = unit === "MB" ? 1000 : 1;
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
+
+      const msg = response.data.filesdata.map((item) => {
+        const filesize = item.size / 1000;
+        const unit = filesize >= 1000 ? "MB" : "KB";
+        const divider = unit === "MB" ? 1000 : 1;
+        return {
           message: `<div class="message">
           <div class="pdf-thumbnail">
               <img src=${pdf} alt="PDF Icon">
           </div>
           <div class="pdf-details" >
-              <p class="pdf-title">${response.data.name}</p>
+              <p class="pdf-title">${item.name}</p>
               <p class="pdf-size">Size: ${(filesize / divider).toFixed(
                 2
               )} ${unit}</p>
           </div>
       </div>`,
           sender: "user",
-          fileUrl: response.data.name,
+          fileUrl: item.name,
           direction: "outgoing",
           // isFile: true, // Indicator for file message
           type: "html",
-        },
-      ]);
+        };
+      });
+      setMessages((prevMessages) => [...prevMessages, ...msg]);
 
+      if (!threadId) {
+        setThreadId(response.data.threadId);
+      }
       setIsUploading(false);
     } catch (error) {
       console.error("Error uploading file:", error);
@@ -394,60 +386,18 @@ export const Chat = () => {
         handleChatChange={handleChatChange}
         handleNewChat={handleNewChat}
       />
+
       <Box
         className="container"
         sx={{
           maxWidth: "2000px",
           height: "100vh",
-          width: "70%",
+          width: ismobile ? "90%" : "70%",
         }}
       >
         <MainContainer
           style={{ width: "100%", display: "flex", flexDirection: "column" }}
         >
-          <Box
-            sx={{
-              marginTop: "10px",
-              display: "flex",
-              justifyContent: "end",
-            }}
-          >
-            <FormControl className="model-select">
-              <InputLabel id="demo-multiple-name-label">Chat Model</InputLabel>
-              <Select
-                labelId="demo-multiple-name-label"
-                id="demo-multiple-name"
-                value={model}
-                onChange={handleChange}
-                input={<OutlinedInput label="Chat model" />}
-              >
-                {modellist.map((item) => (
-                  <MenuItem key={item.name} value={item.name}>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Avatar
-                        name="test"
-                        src={item.icon}
-                        style={{
-                          display: "inline-block",
-                          width: "25px",
-                          minWidth: "25px",
-                          height: "25px",
-                          minHeight: "25px",
-                          marginRight: "5px",
-                        }}
-                      />{" "}
-                      <span>{item.name}</span>{" "}
-                    </div>
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
           <Divider>{threadId}</Divider>
 
           <ChatContainer style={{ paddingTop: "10px", paddingBottom: "10px" }}>
@@ -455,13 +405,7 @@ export const Chat = () => {
               scrollBehavior="smooth"
               typingIndicator={
                 isTyping ? (
-                  <TypingIndicator
-                    content={
-                      model === modellist[0].name
-                        ? "Sual Ai is typing "
-                        : "Adapt model is typing "
-                    }
-                  />
+                  <TypingIndicator content="Assistant is typing" />
                 ) : isUploading ? (
                   <TypingIndicator content="file is uploading" />
                 ) : null
@@ -538,45 +482,126 @@ export const Chat = () => {
 //
 
 const AllChats = ({ userData, handleChatChange, handleNewChat }) => {
+  const [drawer, setDrawer] = useState(false);
+
+  const ismobile = useIsMobile();
+
   return (
     <div
       style={{
-        width: "30%",
+        width: ismobile ? "10%" : "30%",
         backgroundColor: "white",
         color: "black",
       }}
     >
-      <h2 className="charHistoryheading">Chat history</h2>
-      <Divider />
-      <Button
-        onClick={() => handleNewChat()}
-        variant="text"
-        style={{ textAlign: "center", width: "100%", padding: "10px" }}
-      >
-        Create new chat
-      </Button>
-      <Divider />
+      {/* <>
+        <button onClick={() => setDrawer(!drawer)}>button</button>
+        <SwipeableDrawer
+          anchor={"left"}
+          open={drawer}
+          onClose={() => setDrawer(false)}
+          onOpen={() => setDrawer(true)}
+        >
+          <AllChats
+            userData={userData}
+            handleChatChange={handleChatChange}
+            handleNewChat={handleNewChat}
+          />{" "}
+        </SwipeableDrawer>
+      </> */}
+      {ismobile &&
+        (!drawer ? (
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={() => setDrawer(!drawer)}
+            sx={{ marginTop: "10px" }}
+          >
+            <MenuIcon />
+          </IconButton>
+        ) : (
+          <ChevronLeftIcon />
+        ))}
 
       <div>
-        {userData && userData.threadid
-          ? userData.threadid.map((item) => {
-              return (
-                <SingleChat
-                  chatData={item}
-                  handleChatChange={handleChatChange}
-                />
-              );
-            })
-          : null}
+        <SwipeableDrawer
+          anchor={"left"}
+          open={drawer}
+          onClose={() => setDrawer(false)}
+          onOpen={() => setDrawer(true)}
+        >
+          <h2 className="charHistoryheading">Chat history</h2>
+          <Divider />
+          <Button
+            onClick={() => {
+              handleNewChat();
+              setDrawer(false);
+            }}
+            variant="text"
+            style={{ textAlign: "center", width: "100%", padding: "10px" }}
+          >
+            Create new chat
+          </Button>
+          <Divider />
+          <div>
+            {userData && userData.threadid
+              ? userData.threadid.map((item) => {
+                  return (
+                    <SingleChat
+                      chatData={item}
+                      handleChatChange={handleChatChange}
+                      setDrawer={setDrawer}
+                    />
+                  );
+                })
+              : null}
+          </div>
+        </SwipeableDrawer>
       </div>
+      {!ismobile ? (
+        <div>
+          <h2 className="charHistoryheading">Chat history</h2>
+          <Divider />
+          <Button
+            onClick={() => handleNewChat()}
+            variant="text"
+            style={{ textAlign: "center", width: "100%", padding: "10px" }}
+          >
+            Create new chat
+          </Button>
+          <Divider />
+
+          <div>
+            {userData && userData.threadid
+              ? userData.threadid.map((item) => {
+                  return (
+                    <SingleChat
+                      chatData={item}
+                      handleChatChange={handleChatChange}
+                    />
+                  );
+                })
+              : null}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };
 
-const SingleChat = ({ chatData, handleChatChange }) => {
+const SingleChat = ({ chatData, handleChatChange, setDrawer }) => {
   return (
     <div>
-      <h3 className="chatHeading" onClick={() => handleChatChange(chatData)}>
+      <h3
+        className="chatHeading"
+        onClick={() => {
+          handleChatChange(chatData);
+
+          if (setDrawer) {
+            setDrawer(false);
+          }
+        }}
+      >
         {chatData}
       </h3>
       <Divider />
