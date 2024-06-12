@@ -47,6 +47,7 @@ export const Chat = () => {
     },
   ]);
   const [userData, setUserData] = useState(null);
+  console.log("=====userData", userData);
   const [isTyping, setIsTyping] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -226,7 +227,9 @@ export const Chat = () => {
           query: chatMessages[chatMessages.length - 1],
           threadId: threadId,
           isFileUpload: isFileUpload,
-          assitanceId: userData.assistenceid,
+          assitanceId: userData.assistenceid
+            ? userData.assistenceid
+            : userData.id,
           userId: userId,
         },
         {
@@ -299,6 +302,9 @@ export const Chat = () => {
     for (let i = 0; i < selectedFiles.length; i++) {
       formData.append("files", selectedFiles[i]);
     }
+    formData.append("threadId", threadId);
+    formData.append("assitanceId", userData.assistenceid);
+    // formData.append("userId", userId);
 
     // formData.append("uploaded_file", selectedFile);
 
@@ -391,13 +397,13 @@ export const Chat = () => {
       <Box
         className="container"
         sx={{
-          maxWidth: "1440px",
+          maxWidth: "2000px",
           height: "100vh",
           width: "70%",
         }}
       >
         <MainContainer
-          style={{ width: "80%", display: "flex", flexDirection: "column" }}
+          style={{ width: "100%", display: "flex", flexDirection: "column" }}
         >
           <Box
             sx={{
