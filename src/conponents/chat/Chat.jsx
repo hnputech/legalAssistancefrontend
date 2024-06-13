@@ -1,10 +1,5 @@
 import { useRef, useState, useEffect } from "react";
 import axios from "axios";
-import SwipeableDrawer from "@mui/material/SwipeableDrawer";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import MenuIcon from "@mui/icons-material/Menu";
-import IconButton from "@mui/material/IconButton";
-
 import {
   MainContainer,
   ChatContainer,
@@ -13,31 +8,24 @@ import {
   MessageInput,
   TypingIndicator,
   Avatar,
-  Button,
 } from "@chatscope/chat-ui-kit-react";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
 
 import bot from "../../assets/bot.svg";
 import user from "../../assets/user.svg";
 import sualbot from "../../assets/saulbot.svg";
 import pdf from "../../assets/pdf.svg";
 
-import { chats } from "../../requests/chats";
+import {
+  chats,
+  getCurrentUserData,
+  getUserAlMassages,
+  uploadFiles,
+} from "../../requests/chats";
 import { useIsMobile } from "../../hooks/useIsMobile";
-
-// "Explain things like you would to a 10 year old learning how to co de."
-const systemMessage = {
-  //  Explain things like you're talking to a software professional with 5 years of experience.
-  role: "system",
-  content:
-    "you are the experience lawyer having 10 years in the field your job is to help and guid people  ",
-};
+import { ChatsHistory } from "./ChatsHistory";
+import { transformData } from "../../utils/chatHelperFunctions";
 
 const modellist = [
   { name: "Equall/Saul-Instruct-v1", icon: sualbot },
@@ -52,13 +40,10 @@ export const Chat = () => {
     },
   ]);
   const [userData, setUserData] = useState(null);
-  console.log("=====userData", userData);
   const [isTyping, setIsTyping] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
   const [model, setModel] = useState("");
-  const [userName, setUserName] = useState("");
-  const [isFileUpload, setIsFileUpload] = useState(false);
 
   const [threadId, setThreadId] = useState(null);
 
@@ -70,57 +55,11 @@ export const Chat = () => {
   const urlParams = new URLSearchParams(queryString);
   const userId = urlParams.get("user");
 
-  const getUserData = async (userName) => {
-    try {
-      const response = await axios.post(
-        `http://localhost:3001/assistanc/${userName}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Error :", error);
-    }
-  };
-
-  const transformData = (userMessagesData) => {
-    const formattedData = userMessagesData.reverse().map((message) => ({
-      sender: message.role,
-      message: message.content[0].text.value,
-      direction: message.role === "user" ? "outgoing" : "incoming",
-    }));
-    return formattedData;
-  };
-
-  const getUserMassages = async (threadid) => {
-    try {
-      const response = await axios.post(
-        `http://localhost:3001/listmassgaes`,
-        {
-          threadId: threadId,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log("response", response.data);
-      const result = await transformData(response.data.data);
-      setMessages(result);
-      return result;
-    } catch (error) {
-      console.error("Error :", error);
-    }
-  };
   useEffect(() => {
-    console.log("-----**********************--");
     const fetchData = async () => {
-      const data = await getUserMassages(threadId);
-      console.log("=====dta", data);
+      const data = await getUserAlMassages(threadId);
+      const result = await transformData(data);
+      setMessages(result);
     };
 
     if (threadId) {
@@ -128,10 +67,9 @@ export const Chat = () => {
     }
   }, [threadId]);
   useEffect(() => {
-    console.log("ye wala");
     const fetchData = async () => {
       try {
-        const result = await getUserData(userId);
+        const result = await getCurrentUserData(userId);
         setUserData(result);
       } catch (error) {
         console.log(error.message);
@@ -205,44 +143,29 @@ export const Chat = () => {
     // and the messages which we formatted above. We add a system message in the front to'
     // determine how we want chatGPT to act.
     const apiRequestBody = {
-      chat:
-        model === modellist[0].name
-          ? [
-              ...apiMessages.slice(1), // The messages from our chat with ChatGPT
-            ]
-          : [
-              systemMessage, // The system message DEFINES the logic of our chatGPT
-              ...apiMessages.slice(1), // The messages from our chat with ChatGPT
-            ],
+      chat: [
+        ...apiMessages.slice(1), // The messages from our chat with ChatGPT
+      ],
       model: model,
     };
 
     // =================
-    // const query = { query: chatMessages[chatMessages.length - 1].message };
 
     try {
-      const response = await axios.post(
-        "http://localhost:3001/chat",
-        {
-          query: chatMessages[chatMessages.length - 1],
-          threadId: threadId,
-          isFileUpload: isFileUpload,
-          assitanceId: userData.assistenceid
-            ? userData.assistenceid
-            : userData.id,
-          userId: userId,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log("File uploaded successfully:", response.data);
+      const payloadObj = {
+        query: chatMessages[chatMessages.length - 1],
+        threadId: threadId,
+        assitanceId: userData.assistenceid
+          ? userData.assistenceid
+          : userData.id,
+        userId: userId,
+      };
+      const response = await chats(payloadObj);
+      console.log("======response", response);
       setMessages([
         ...chatMessages,
         {
-          message: response.data.content[0].text.value,
+          message: response.content[0].text.value,
           sender: model,
         },
       ]);
@@ -251,7 +174,7 @@ export const Chat = () => {
       }
 
       // for testing
-      const myresult = await getUserData(userId);
+      const myresult = await getCurrentUserData(userId);
       setUserData(myresult);
 
       // testing end
@@ -259,24 +182,6 @@ export const Chat = () => {
       console.error("Error uploading file:", error);
     }
 
-    // ================
-
-    const query = { query: chatMessages[chatMessages.length - 1].message };
-    // const data = await chats(query);
-    // setMessages([
-    //   ...chatMessages,
-    //   {
-    //     message: data[0].content,
-    //     sender: model,
-    //   },
-    // ]);
-    // setMessages([
-    //   ...chatMessages,
-    //   {
-    //     message: response.data,
-    //     sender: model,
-    //   },
-    // ]);
     setIsTyping(false);
   };
 
@@ -294,9 +199,14 @@ export const Chat = () => {
     for (let i = 0; i < selectedFiles.length; i++) {
       formData.append("files", selectedFiles[i]);
     }
+
     formData.append("threadId", threadId);
-    formData.append("assitanceId", userData.assistenceid);
+    formData.append(
+      "assitanceId",
+      userData.id ? userData.id : userData.assistenceid
+    );
     formData.append("userId", userId);
+    console.log("====formData", formData);
 
     setIsUploading(true);
     try {
@@ -309,10 +219,6 @@ export const Chat = () => {
           },
         }
       );
-
-      console.log("========response", response);
-
-      setIsFileUpload(true);
 
       const msg = response.data.filesdata.map((item) => {
         const filesize = item.size / 1000;
@@ -349,39 +255,9 @@ export const Chat = () => {
     }
   };
 
-  // const handleFileChange = (event) => {
-  //   const selectedFile = event.target.files[0];
-  //   if (!selectedFile) {
-  //     return;
-  //   }
-
-  //   const formData = new FormData();
-  //   formData.append("file", selectedFile);
-
-  //   fetch("http://localhost:5000/upload-pdf", {
-  //     method: "POST",
-  //     body: formData,
-  //   })
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       if (data.error) {
-  //         alert("Error: " + data.error);
-  //       } else {
-  //         alert("Success: " + data.message);
-  //         setMessages([
-  //           ...messages,
-  //           { message: `Uploaded: ${selectedFile.name}`, sender: "user" },
-  //         ]);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error:", error);
-  //     });
-  // };
-
   return (
     <div style={{ display: "flex" }}>
-      <AllChats
+      <ChatsHistory
         userData={userData}
         handleChatChange={handleChatChange}
         handleNewChat={handleNewChat}
@@ -480,131 +356,3 @@ export const Chat = () => {
 };
 
 //
-
-const AllChats = ({ userData, handleChatChange, handleNewChat }) => {
-  const [drawer, setDrawer] = useState(false);
-
-  const ismobile = useIsMobile();
-
-  return (
-    <div
-      style={{
-        width: ismobile ? "10%" : "30%",
-        backgroundColor: "white",
-        color: "black",
-      }}
-    >
-      {/* <>
-        <button onClick={() => setDrawer(!drawer)}>button</button>
-        <SwipeableDrawer
-          anchor={"left"}
-          open={drawer}
-          onClose={() => setDrawer(false)}
-          onOpen={() => setDrawer(true)}
-        >
-          <AllChats
-            userData={userData}
-            handleChatChange={handleChatChange}
-            handleNewChat={handleNewChat}
-          />{" "}
-        </SwipeableDrawer>
-      </> */}
-      {ismobile &&
-        (!drawer ? (
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={() => setDrawer(!drawer)}
-            sx={{ marginTop: "10px" }}
-          >
-            <MenuIcon />
-          </IconButton>
-        ) : (
-          <ChevronLeftIcon />
-        ))}
-
-      <div>
-        <SwipeableDrawer
-          anchor={"left"}
-          open={drawer}
-          onClose={() => setDrawer(false)}
-          onOpen={() => setDrawer(true)}
-        >
-          <h2 className="charHistoryheading">Chat history</h2>
-          <Divider />
-          <Button
-            onClick={() => {
-              handleNewChat();
-              setDrawer(false);
-            }}
-            variant="text"
-            style={{ textAlign: "center", width: "100%", padding: "10px" }}
-          >
-            Create new chat
-          </Button>
-          <Divider />
-          <div>
-            {userData && userData.threadid
-              ? userData.threadid.map((item) => {
-                  return (
-                    <SingleChat
-                      chatData={item}
-                      handleChatChange={handleChatChange}
-                      setDrawer={setDrawer}
-                    />
-                  );
-                })
-              : null}
-          </div>
-        </SwipeableDrawer>
-      </div>
-      {!ismobile ? (
-        <div>
-          <h2 className="charHistoryheading">Chat history</h2>
-          <Divider />
-          <Button
-            onClick={() => handleNewChat()}
-            variant="text"
-            style={{ textAlign: "center", width: "100%", padding: "10px" }}
-          >
-            Create new chat
-          </Button>
-          <Divider />
-
-          <div>
-            {userData && userData.threadid
-              ? userData.threadid.map((item) => {
-                  return (
-                    <SingleChat
-                      chatData={item}
-                      handleChatChange={handleChatChange}
-                    />
-                  );
-                })
-              : null}
-          </div>
-        </div>
-      ) : null}
-    </div>
-  );
-};
-
-const SingleChat = ({ chatData, handleChatChange, setDrawer }) => {
-  return (
-    <div>
-      <h3
-        className="chatHeading"
-        onClick={() => {
-          handleChatChange(chatData);
-
-          if (setDrawer) {
-            setDrawer(false);
-          }
-        }}
-      >
-        {chatData}
-      </h3>
-      <Divider />
-    </div>
-  );
-};
