@@ -122,3 +122,43 @@
 .css-4t3x6l-MuiPaper-root-MuiDrawer-paper {
   width: 300px;
 }
+
+/* toggle needs to change it  */
+/* ToggleButton.css */
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  height: 50px;
+  margin-right: 20px;
+}
+
+.toggle-button {
+  width: 60px;
+  height: 30px;
+  background-color: #ccc;
+  border-radius: 15px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.toggle-button.active {
+  background-color: #4caf50;
+}
+
+.toggle-circle {
+  width: 26px;
+  height: 26px;
+  background-color: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s;
+}
+
+.toggle-button.active .toggle-circle {
+  transform: translateX(30px);
+}

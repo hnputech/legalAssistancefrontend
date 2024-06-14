@@ -42,10 +42,12 @@ export const Chat = () => {
   const [userData, setUserData] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [teststate, setTestState] = useState(false);
 
-  const [model, setModel] = useState("");
+  // const [model, setModl] = useState("");
 
   const [threadId, setThreadId] = useState(null);
+  const [isToggled, setIsToggled] = useState(true);
 
   const fileInputRef = useRef(null);
   const hasRunRef = useRef(false);
@@ -55,14 +57,17 @@ export const Chat = () => {
   const urlParams = new URLSearchParams(queryString);
   const userId = urlParams.get("user");
 
+  const model = isToggled ? "GPT-4o" : "GPT-3.5";
+
   useEffect(() => {
     const fetchData = async () => {
       const data = await getUserAlMassages(threadId);
+      console.log("====data", data);
       const result = await transformData(data);
       setMessages(result);
     };
 
-    if (threadId) {
+    if (threadId && teststate) {
       fetchData();
     }
   }, [threadId]);
@@ -70,6 +75,7 @@ export const Chat = () => {
     const fetchData = async () => {
       try {
         const result = await getCurrentUserData(userId);
+        console.log("=====resu", result);
         setUserData(result);
       } catch (error) {
         console.log(error.message);
@@ -81,11 +87,8 @@ export const Chat = () => {
       fetchData();
     }
   }, []);
-  const handleChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setModel(value);
+  const toggleButton = () => {
+    setIsToggled(!isToggled);
   };
 
   const handleSend = async (message) => {
@@ -109,6 +112,7 @@ export const Chat = () => {
 
   const handleChatChange = (threadId) => {
     setThreadId(threadId);
+    setTestState(true);
   };
   const handleNewChat = () => {
     setThreadId(null);
@@ -154,30 +158,53 @@ export const Chat = () => {
     try {
       const payloadObj = {
         query: chatMessages[chatMessages.length - 1],
-        threadId: threadId,
+        threadId: threadId && threadId,
         assitanceId: userData.assistenceid
           ? userData.assistenceid
           : userData.id,
         userId: userId,
+        // isTitleUpdate: threadId && JSON.parse(threadId).titleUpdated,
       };
       const response = await chats(payloadObj);
       console.log("======response", response);
       setMessages([
         ...chatMessages,
         {
-          message: response.content[0].text.value,
+          message: response.chat,
           sender: model,
         },
       ]);
+      console.log("=====threadId", threadId);
       if (!threadId) {
-        setThreadId(response.data.thread_id);
+        console.log("in ke under a na bhai ");
+        setThreadId(response.thread_id);
+        setTestState(false);
+
+        // for testing
+        // const myresult = await getCurrentUserData(userId);
+
+        // const newUJSerValue = {
+        //   ...userData,
+        //   threadid: userData.threadid.push({
+        //     thread_id: threadId,
+        //     title: "untitled",
+        //   }),
+        // };
+
+        const newThread = {
+          thread_id: response.thread_id,
+          title: "untitled",
+        };
+
+        setUserData((prevState) => {
+          const updatedThreads = prevState.threadid
+            ? [newThread, ...prevState.threadid]
+            : [newThread];
+          return { ...prevState, threadid: updatedThreads };
+        });
+
+        // testing end
       }
-
-      // for testing
-      const myresult = await getCurrentUserData(userId);
-      setUserData(myresult);
-
-      // testing end
     } catch (error) {
       console.error("Error uploading file:", error);
     }
@@ -274,7 +301,21 @@ export const Chat = () => {
         <MainContainer
           style={{ width: "100%", display: "flex", flexDirection: "column" }}
         >
-          <Divider>{threadId}</Divider>
+          <div className="toggle-container">
+            <div style={{ marginRight: "20px", fontWeight: "bold" }}>
+              {isToggled ? "GPT 4o" : "GPT -3.5"}
+            </div>
+
+            <div
+              className={`toggle-button ${isToggled ? "active" : ""}`}
+              onClick={toggleButton}
+            >
+              {" "}
+              <div className="toggle-circle"></div>
+            </div>
+          </div>
+
+          <Divider>{threadId && threadId.threadId}</Divider>
 
           <ChatContainer style={{ paddingTop: "10px", paddingBottom: "10px" }}>
             <MessageList

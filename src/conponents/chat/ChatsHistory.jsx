@@ -9,6 +9,7 @@ import { SingleChatHistory } from "./SingleChatHistory";
 
 export const ChatsHistory = ({ userData, handleChatChange, handleNewChat }) => {
   const [drawer, setDrawer] = useState(false);
+  console.log("user===", userData);
 
   const ismobile = useIsMobile();
 

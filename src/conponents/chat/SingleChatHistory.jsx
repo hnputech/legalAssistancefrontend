@@ -5,6 +5,7 @@ export const SingleChatHistory = ({
   handleChatChange,
   setDrawer,
 }) => {
+  console.log("-=====vchatData", chatData);
   return (
     <div>
       <h3
@@ -17,7 +18,7 @@ export const SingleChatHistory = ({
           }
         }}
       >
-        {chatData}
+        {chatData.title}
       </h3>
       <Divider />
     </div>

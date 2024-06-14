@@ -17,7 +17,7 @@ export const chats = async ({ query, threadId, assitanceId, userId }) => {
 export const getUserAlMassages = async (threadid) => {
   try {
     const response = await axioxInstance.post(`/listmassgaes/`, {
-      threadId: threadid,
+      threadId: threadid.thread_id,
     });
 
     return response.data.data;
