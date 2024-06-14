@@ -27,6 +27,10 @@ import { useIsMobile } from "../../hooks/useIsMobile";
 import { ChatsHistory } from "./ChatsHistory";
 import { transformData } from "../../utils/chatHelperFunctions";
 
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
+import Button from "@mui/material/Button";
+
 const modellist = [
   { name: "Equall/Saul-Instruct-v1", icon: sualbot },
   { name: "AdaptLLM/law-chat", icon: bot },
@@ -59,11 +63,20 @@ export const Chat = () => {
 
   const model = isToggled ? "GPT-4o" : "GPT-3.5";
 
+  const [open, setOpen] = useState(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
+      setOpen(true);
+
       const data = await getUserAlMassages(threadId);
       console.log("====data", data);
       const result = await transformData(data);
+      setOpen(false);
+
       setMessages(result);
     };
 
@@ -73,12 +86,16 @@ export const Chat = () => {
   }, [threadId]);
   useEffect(() => {
     const fetchData = async () => {
+      setOpen(true);
+
       try {
         const result = await getCurrentUserData(userId);
         console.log("=====resu", result);
         setUserData(result);
+        setOpen(false);
       } catch (error) {
         console.log(error.message);
+        setOpen(false);
       }
     };
 
@@ -284,6 +301,13 @@ export const Chat = () => {
 
   return (
     <div style={{ display: "flex" }}>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={open}
+        // onClick={handleClose}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <ChatsHistory
         userData={userData}
         handleChatChange={handleChatChange}
