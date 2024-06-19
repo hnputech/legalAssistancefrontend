@@ -59,14 +59,13 @@ export const Chat = () => {
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  const userId = urlParams.get("user");
-
-  const model = isToggled ? "GPT-4o" : "GPT-3.5";
+  const model = isToggled ? "gpt-4o" : "gpt-3.5-turbo";
+  let userId = urlParams.get("user");
+  if (!userId) {
+    userId = model;
+  }
 
   const [open, setOpen] = useState(false);
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -103,9 +102,10 @@ export const Chat = () => {
       hasRunRef.current = true;
       fetchData();
     }
-  }, []);
+  }, [isToggled]);
   const toggleButton = () => {
     setIsToggled(!isToggled);
+    hasRunRef.current = false;
   };
 
   const handleSend = async (message) => {
