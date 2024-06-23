@@ -35,7 +35,6 @@ export const ChatsHistory = ({
             color="inherit"
             aria-label="open drawer"
             onClick={() => setDrawer(!drawer)}
-            sx={{ marginTop: "10px" }}
           >
             <MenuIcon />
           </IconButton>

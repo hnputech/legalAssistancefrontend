@@ -6,3 +6,13 @@ export const transformData = (userMessagesData) => {
   }));
   return formattedData;
 };
+
+export const calculateCost = (pricePerMillion, numberOfUnits) => {
+  // Calculate the price per unit
+  const pricePerUnit = pricePerMillion / 1000000;
+
+  // Calculate the total cost
+  const totalCost = pricePerUnit * numberOfUnits;
+
+  return totalCost;
+};

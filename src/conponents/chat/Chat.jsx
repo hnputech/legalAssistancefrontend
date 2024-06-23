@@ -25,11 +25,13 @@ import {
 } from "../../requests/chats";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { ChatsHistory } from "./ChatsHistory";
-import { transformData } from "../../utils/chatHelperFunctions";
+import { calculateCost, transformData } from "../../utils/chatHelperFunctions";
 
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import Button from "@mui/material/Button";
+import Badge from "@mui/material/Badge";
+import StorageIcon from "@mui/icons-material/Storage";
 
 const modellist = [
   { name: "Equall/Saul-Instruct-v1", icon: sualbot },
@@ -48,6 +50,10 @@ export const Chat = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [teststate, setTestState] = useState(false);
 
+  const [tokenCost, setTokenCost] = useState({
+    token: 0,
+    cost: 0,
+  });
   // const [model, setModl] = useState("");
 
   const [threadId, setThreadId] = useState(null);
@@ -200,6 +206,13 @@ export const Chat = () => {
           sender: model,
         },
       ]);
+      const costCalculator =
+        calculateCost(5, response.tokkens.promptTokens) +
+        calculateCost(15, response.tokkens.completionTokens);
+      setTokenCost({
+        token: response.tokkens.totalTokens,
+        cost: costCalculator,
+      });
       if (!threadId) {
         console.log("in ! thread id condition chat ", threadId);
         setThreadId(response.thread_id);
@@ -332,42 +345,92 @@ export const Chat = () => {
         <CircularProgress color="inherit" />
       </Backdrop>
 
-      <ChatsHistory
-        userData={userData}
-        handleChatChange={handleChatChange}
-        handleNewChat={handleNewChat}
-        handleUploadFile={handleUploadFile}
-        threadId={threadId}
-        fileData={fileData}
-      />
+      {!ismobile ? (
+        <ChatsHistory
+          userData={userData}
+          handleChatChange={handleChatChange}
+          handleNewChat={handleNewChat}
+          handleUploadFile={handleUploadFile}
+          threadId={threadId}
+          fileData={fileData}
+        />
+      ) : null}
 
       <Box
         className="container"
         sx={{
           maxWidth: "2000px",
           height: "100vh",
-          width: ismobile ? "90%" : "70%",
+          width: ismobile ? "100%" : "70%",
         }}
       >
         <MainContainer
           style={{ width: "100%", display: "flex", flexDirection: "column" }}
         >
-          <div className="toggle-container">
-            <div style={{ marginRight: "20px", fontWeight: "bold" }}>
-              {isToggled ? "GPT 4o" : "GPT -3.5"}
-            </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: ismobile ? "space-between" : "end",
+              alignItems: "center",
+            }}
+          >
+            {ismobile ? (
+              <ChatsHistory
+                userData={userData}
+                handleChatChange={handleChatChange}
+                handleNewChat={handleNewChat}
+                handleUploadFile={handleUploadFile}
+                threadId={threadId}
+                fileData={fileData}
+              />
+            ) : null}
+            <div className="toggle-container">
+              <div style={{ marginRight: "20px", fontWeight: "bold" }}>
+                {isToggled ? "GPT 4o" : "GPT -3.5"}
+              </div>
 
-            <div
-              className={`toggle-button ${isToggled ? "active" : ""}`}
-              onClick={toggleButton}
-            >
-              {" "}
-              <div className="toggle-circle"></div>
+              <div
+                className={`toggle-button ${isToggled ? "active" : ""}`}
+                onClick={toggleButton}
+              >
+                {" "}
+                <div className="toggle-circle"></div>
+              </div>
             </div>
           </div>
 
           <Divider>{threadId && threadId.threadId}</Divider>
 
+          <div
+            style={{
+              marginTop: "15px",
+              display: "flex",
+              justifyContent: "space-between",
+              marginRight: "30px",
+            }}
+          >
+            <div style={{ marginLeft: "10px", marginBottom: "20px" }}>
+              <span>
+                {" "}
+                <span style={{ fontWeight: "bold" }}>
+                  ${tokenCost.cost.toPrecision(3)} &nbsp;
+                </span>
+                cost (CE ),
+              </span>
+              <span>
+                {" "}
+                <span style={{ fontWeight: "bold" }}>
+                  {tokenCost.token}
+                </span>{" "}
+                tokens
+              </span>
+            </div>
+            <div>
+              <Badge color="primary" badgeContent={5}>
+                <StorageIcon />
+              </Badge>
+            </div>
+          </div>
           <ChatContainer style={{ paddingTop: "10px", paddingBottom: "10px" }}>
             <MessageList
               scrollBehavior="smooth"
