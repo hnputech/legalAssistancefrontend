@@ -162,3 +162,27 @@
 .toggle-button.active .toggle-circle {
   transform: translateX(30px);
 }
+
+/* Customize the scrollbar */
+::-webkit-scrollbar {
+  width: 12px; /* Width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Background of the scrollbar track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: azure; /* Color of the scrollbar thumb */
+  border-radius: 10px; /* Rounded corners of the scrollbar thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Color of the scrollbar thumb on hover */
+}
+
+/* Customize the scrollbar for Firefox */
+html {
+  scrollbar-width: thin; /* Scrollbar width */
+  scrollbar-color: azure #f1f1f1; /* Thumb color and track color */
+}

@@ -1,12 +1,19 @@
 import { axioxInstance } from "./apiInstance";
 
-export const chats = async ({ query, threadId, assitanceId, userId }) => {
+export const chats = async ({
+  query,
+  threadId,
+  assitanceId,
+  userId,
+  titleUpdate,
+}) => {
   try {
     const response = await axioxInstance.post("/chat/", {
       query,
       threadId,
       assitanceId,
       userId,
+      titleUpdate,
     });
     return response.data;
   } catch (err) {
@@ -17,10 +24,37 @@ export const chats = async ({ query, threadId, assitanceId, userId }) => {
 export const getUserAlMassages = async (threadid) => {
   try {
     const response = await axioxInstance.post(`/listmassgaes/`, {
-      threadId: threadid.thread_id,
+      threadId: threadid,
     });
 
     return response.data.data;
+  } catch (error) {
+    console.error("Error :", error);
+  }
+};
+
+export const getThreadAlFiles = async (threadid) => {
+  try {
+    const response = await axioxInstance.post(`/listfiles/`, {
+      threadId: threadid,
+    });
+
+    console.log("=====response", response);
+    return response.data;
+  } catch (error) {
+    console.error("Error :", error);
+  }
+};
+
+export const deleteFiles = async (fileid, storeid) => {
+  try {
+    const response = await axioxInstance.post(`/deletefile/`, {
+      fileid: fileid,
+      storeid: storeid,
+    });
+
+    console.log("=====response", response);
+    return response.data;
   } catch (error) {
     console.error("Error :", error);
   }

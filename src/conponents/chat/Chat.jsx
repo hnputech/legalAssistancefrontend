@@ -51,6 +51,7 @@ export const Chat = () => {
   // const [model, setModl] = useState("");
 
   const [threadId, setThreadId] = useState(null);
+  console.log("======*****threadId*****======", threadId);
   const [isToggled, setIsToggled] = useState(true);
 
   const fileInputRef = useRef(null);
@@ -65,14 +66,16 @@ export const Chat = () => {
     userId = model;
   }
 
+  // temporary state
+  const [fileData, setFileData] = useState([]);
+
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       setOpen(true);
 
-      const data = await getUserAlMassages(threadId);
-      console.log("====data", data);
+      const data = await getUserAlMassages(threadId.threadid);
       const result = await transformData(data);
       setOpen(false);
 
@@ -89,8 +92,9 @@ export const Chat = () => {
 
       try {
         const result = await getCurrentUserData(userId);
-        console.log("=====resu", result);
-        setUserData(result);
+        const reversedata = result.reverse();
+
+        setUserData(reversedata);
         setOpen(false);
       } catch (error) {
         console.log(error.message);
@@ -128,6 +132,7 @@ export const Chat = () => {
   };
 
   const handleChatChange = (threadId) => {
+    console.log("=====threadId", threadId);
     setThreadId(threadId);
     setTestState(true);
   };
@@ -140,6 +145,10 @@ export const Chat = () => {
         sender: "Equall/Saul-Instruct-v1",
       },
     ]);
+  };
+
+  const handleUploadFile = () => {
+    handleAttachClick();
   };
   const processMessageToChatGPT = async (message, chatMessages, model) => {
     // messages is an array of messages
@@ -175,15 +184,15 @@ export const Chat = () => {
     try {
       const payloadObj = {
         query: chatMessages[chatMessages.length - 1],
-        threadId: threadId && threadId,
-        assitanceId: userData.assistenceid
-          ? userData.assistenceid
+        threadId: threadId && threadId.threadid ? threadId.threadid : threadId,
+        assitanceId: userData[0].assistenceid
+          ? userData[0].assistenceid
           : userData.id,
         userId: userId,
+        titleUpdate: false,
         // isTitleUpdate: threadId && JSON.parse(threadId).titleUpdated,
       };
       const response = await chats(payloadObj);
-      console.log("======response", response);
       setMessages([
         ...chatMessages,
         {
@@ -191,11 +200,21 @@ export const Chat = () => {
           sender: model,
         },
       ]);
-      console.log("=====threadId", threadId);
       if (!threadId) {
-        console.log("in ke under a na bhai ");
+        console.log("in ! thread id condition chat ", threadId);
         setThreadId(response.thread_id);
         setTestState(false);
+
+        setUserData((prevState) => {
+          const newState = {
+            assistenceid: userData[0].assistenceid,
+            threadid: response.thread_id,
+            title: response.title,
+            isttileupdated: response.titleUpdated,
+          };
+
+          return [newState, ...prevState];
+        });
 
         // for testing
         // const myresult = await getCurrentUserData(userId);
@@ -213,12 +232,12 @@ export const Chat = () => {
           title: "untitled",
         };
 
-        setUserData((prevState) => {
-          const updatedThreads = prevState.threadid
-            ? [newThread, ...prevState.threadid]
-            : [newThread];
-          return { ...prevState, threadid: updatedThreads };
-        });
+        // setUserData((prevState) => {
+        //   const updatedThreads = prevState.threadid
+        //     ? [newThread, ...prevState.threadid]
+        //     : [newThread];
+        //   return { ...prevState, threadid: updatedThreads };
+        // });
 
         // testing end
       }
@@ -244,13 +263,15 @@ export const Chat = () => {
       formData.append("files", selectedFiles[i]);
     }
 
-    formData.append("threadId", threadId);
+    formData.append(
+      "threadId",
+      threadId && threadId.threadid ? threadId.threadid : threadId
+    );
     formData.append(
       "assitanceId",
-      userData.id ? userData.id : userData.assistenceid
+      userData[0].id ? userData[0].id : userData[0].assistenceid
     );
     formData.append("userId", userId);
-    console.log("====formData", formData);
 
     setIsUploading(true);
     try {
@@ -264,32 +285,34 @@ export const Chat = () => {
         }
       );
 
-      const msg = response.data.filesdata.map((item) => {
-        const filesize = item.size / 1000;
-        const unit = filesize >= 1000 ? "MB" : "KB";
-        const divider = unit === "MB" ? 1000 : 1;
-        return {
-          message: `<div class="message">
-          <div class="pdf-thumbnail">
-              <img src=${pdf} alt="PDF Icon">
-          </div>
-          <div class="pdf-details" >
-              <p class="pdf-title">${item.name}</p>
-              <p class="pdf-size">Size: ${(filesize / divider).toFixed(
-                2
-              )} ${unit}</p>
-          </div>
-      </div>`,
-          sender: "user",
-          fileUrl: item.name,
-          direction: "outgoing",
-          // isFile: true, // Indicator for file message
-          type: "html",
-        };
-      });
-      setMessages((prevMessages) => [...prevMessages, ...msg]);
+      setFileData(response.data.filesdata);
+      // const msg = response.data.filesdata.map((item) => {
+      //   const filesize = item.size / 1000;
+      //   const unit = filesize >= 1000 ? "MB" : "KB";
+      //   const divider = unit === "MB" ? 1000 : 1;
+      //   return {
+      //     message: `<div class="message">
+      //     <div class="pdf-thumbnail">
+      //         <img src=${pdf} alt="PDF Icon">
+      //     </div>
+      //     <div class="pdf-details" >
+      //         <p class="pdf-title">${item.name}</p>
+      //         <p class="pdf-size">Size: ${(filesize / divider).toFixed(
+      //           2
+      //         )} ${unit}</p>
+      //     </div>
+      // </div>`,
+      //     sender: "user",
+      //     fileUrl: item.name,
+      //     direction: "outgoing",
+      //     // isFile: true, // Indicator for file message
+      //     type: "html",
+      //   };
+      // });
+      // setMessages((prevMessages) => [...prevMessages, ...msg]);
 
       if (!threadId) {
+        console.log("=========in not threadid condition file upload", threadId);
         setThreadId(response.data.threadId);
       }
       setIsUploading(false);
@@ -300,7 +323,7 @@ export const Chat = () => {
   };
 
   return (
-    <div style={{ display: "flex" }}>
+    <div style={{ display: "flex", width: "100%" }}>
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={open}
@@ -308,10 +331,14 @@ export const Chat = () => {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
+
       <ChatsHistory
         userData={userData}
         handleChatChange={handleChatChange}
         handleNewChat={handleNewChat}
+        handleUploadFile={handleUploadFile}
+        threadId={threadId}
+        fileData={fileData}
       />
 
       <Box
@@ -399,10 +426,10 @@ export const Chat = () => {
               placeholder="Type message here"
               onSend={handleSend}
               style={{ paddingTop: "15px" }}
-              // attachButton={false}
+              attachButton={false}
               // onAttachClick={handleAttach}
-              attachButton={true}
-              onAttachClick={handleAttachClick}
+              // attachButton={true}
+              // onAttachClick={handleAttachClick}
               disabled={isTyping || isUploading}
             />
           </ChatContainer>
