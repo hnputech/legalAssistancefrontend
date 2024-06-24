@@ -39,7 +39,6 @@ export const getThreadAlFiles = async (threadid) => {
       threadId: threadid,
     });
 
-    console.log("=====response", response);
     return response.data;
   } catch (error) {
     console.error("Error :", error);
@@ -53,7 +52,6 @@ export const deleteFiles = async (fileid, storeid) => {
       storeid: storeid,
     });
 
-    console.log("=====response", response);
     return response.data;
   } catch (error) {
     console.error("Error :", error);

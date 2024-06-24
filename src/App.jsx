@@ -1,12 +1,16 @@
 import "./App.css";
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import { Chat } from "./conponents/chat/Chat";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
 
 function App() {
   return (
-    <div className="App">
-      <Chat />
-    </div>
+    <Provider store={store}>
+      <div className="App">
+        <Chat />
+      </div>
+    </Provider>
   );
 }
 

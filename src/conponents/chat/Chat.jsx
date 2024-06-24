@@ -32,6 +32,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Button from "@mui/material/Button";
 import Badge from "@mui/material/Badge";
 import StorageIcon from "@mui/icons-material/Storage";
+import { useSelector, useDispatch } from "react-redux";
+import { addFile, setThreadFiles } from "../../store/features/chatSlice";
 
 const modellist = [
   { name: "Equall/Saul-Instruct-v1", icon: sualbot },
@@ -57,8 +59,10 @@ export const Chat = () => {
   // const [model, setModl] = useState("");
 
   const [threadId, setThreadId] = useState(null);
-  console.log("======*****threadId*****======", threadId);
   const [isToggled, setIsToggled] = useState(true);
+
+  const filesArray = useSelector((state) => state.file);
+  const dispatch = useDispatch();
 
   const fileInputRef = useRef(null);
   const hasRunRef = useRef(false);
@@ -66,14 +70,13 @@ export const Chat = () => {
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  const model = isToggled ? "gpt-4o" : "gpt-3.5-turbo";
+  const model = isToggled ? "gpt440" : "gpt35turbo";
   let userId = urlParams.get("user");
   if (!userId) {
     userId = model;
   }
 
   // temporary state
-  const [fileData, setFileData] = useState([]);
 
   const [open, setOpen] = useState(false);
 
@@ -138,12 +141,17 @@ export const Chat = () => {
   };
 
   const handleChatChange = (threadId) => {
-    console.log("=====threadId", threadId);
     setThreadId(threadId);
     setTestState(true);
   };
   const handleNewChat = () => {
     setThreadId(null);
+    dispatch(setThreadFiles([]));
+    setTestState(false);
+    setTokenCost({
+      token: 0,
+      cost: 0,
+    });
     setMessages([
       {
         message: "Hello, I'm Law GPT! Ask me anything!",
@@ -207,14 +215,19 @@ export const Chat = () => {
         },
       ]);
       const costCalculator =
-        calculateCost(5, response.tokkens.promptTokens) +
-        calculateCost(15, response.tokkens.completionTokens);
+        calculateCost(
+          (model = "gpt35turbo" ? 0.5 : 5),
+          response.tokkens.promptTokens
+        ) +
+        calculateCost(
+          (model = "gpt35turbo" ? 1.5 : 15),
+          response.tokkens.completionTokens
+        );
       setTokenCost({
         token: response.tokkens.totalTokens,
         cost: costCalculator,
       });
       if (!threadId) {
-        console.log("in ! thread id condition chat ", threadId);
         setThreadId(response.thread_id);
         setTestState(false);
 
@@ -298,7 +311,7 @@ export const Chat = () => {
         }
       );
 
-      setFileData(response.data.filesdata);
+      dispatch(addFile(response.data.filesdata));
       // const msg = response.data.filesdata.map((item) => {
       //   const filesize = item.size / 1000;
       //   const unit = filesize >= 1000 ? "MB" : "KB";
@@ -325,7 +338,6 @@ export const Chat = () => {
       // setMessages((prevMessages) => [...prevMessages, ...msg]);
 
       if (!threadId) {
-        console.log("=========in not threadid condition file upload", threadId);
         setThreadId(response.data.threadId);
       }
       setIsUploading(false);
@@ -352,7 +364,6 @@ export const Chat = () => {
           handleNewChat={handleNewChat}
           handleUploadFile={handleUploadFile}
           threadId={threadId}
-          fileData={fileData}
         />
       ) : null}
 
@@ -381,7 +392,6 @@ export const Chat = () => {
                 handleNewChat={handleNewChat}
                 handleUploadFile={handleUploadFile}
                 threadId={threadId}
-                fileData={fileData}
               />
             ) : null}
             <div className="toggle-container">
@@ -426,12 +436,19 @@ export const Chat = () => {
               </span>
             </div>
             <div>
-              <Badge color="primary" badgeContent={5}>
+              <Badge color="primary" badgeContent={filesArray.length}>
                 <StorageIcon />
               </Badge>
             </div>
           </div>
-          <ChatContainer style={{ paddingTop: "10px", paddingBottom: "10px" }}>
+          <ChatContainer
+            style={{
+              paddingTop: "10px",
+              paddingBottom: "10px",
+
+              height: "85vh",
+            }}
+          >
             <MessageList
               scrollBehavior="smooth"
               typingIndicator={
@@ -489,10 +506,10 @@ export const Chat = () => {
               placeholder="Type message here"
               onSend={handleSend}
               style={{ paddingTop: "15px" }}
-              attachButton={false}
+              // attachButton={false}
               // onAttachClick={handleAttach}
-              // attachButton={true}
-              // onAttachClick={handleAttachClick}
+              attachButton={true}
+              onAttachClick={handleAttachClick}
               disabled={isTyping || isUploading}
             />
           </ChatContainer>

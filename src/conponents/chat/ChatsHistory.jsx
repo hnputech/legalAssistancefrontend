@@ -8,6 +8,8 @@ import { Button, Divider } from "@mui/material";
 import { SingleChatHistory } from "./SingleChatHistory";
 import CloseIcon from "@mui/icons-material/Close";
 import { deleteFiles, getThreadAlFiles } from "../../requests/chats";
+import { useSelector, useDispatch } from "react-redux";
+import { setThreadFiles } from "../../store/features/chatSlice";
 
 export const ChatsHistory = ({
   userData,
@@ -15,7 +17,6 @@ export const ChatsHistory = ({
   handleNewChat,
   handleUploadFile,
   threadId,
-  fileData,
 }) => {
   const [drawer, setDrawer] = useState(false);
 
@@ -49,7 +50,61 @@ export const ChatsHistory = ({
           onClose={() => setDrawer(false)}
           onOpen={() => setDrawer(true)}
         >
-          <h2 className="charHistoryheading">Chat history</h2>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div
+              style={{
+                overflowY: "auto",
+                height: "60vh",
+              }}
+            >
+              <h2 className="charHistoryheading">Chat history</h2>
+              <Divider />
+              <Button
+                onClick={() => handleNewChat()}
+                variant="text"
+                style={{ textAlign: "center", width: "100%", padding: "10px" }}
+              >
+                Create new chat
+              </Button>
+              <Divider />
+
+              <div>
+                {userData &&
+                  userData.map((item) => {
+                    return (
+                      <SingleChatHistory
+                        chatData={item}
+                        handleChatChange={handleChatChange}
+                      />
+                    );
+                  })}
+              </div>
+            </div>
+
+            <div style={{ height: "40vh", overflowY: "auto" }}>
+              <Divider />
+              <h2 className="charHistoryheading">Uploaded Files</h2>
+              <Divider />
+              <Button
+                onClick={() => {
+                  handleUploadFile();
+                  setDrawer(false);
+                }}
+                variant="text"
+                style={{ textAlign: "center", width: "100%", padding: "10px" }}
+              >
+                Upload{" "}
+              </Button>
+              <Divider />
+
+              <div>
+                {threadId && threadId ? (
+                  <ThreadFiles threadId={threadId.threadid} />
+                ) : null}
+              </div>
+            </div>
+          </div>
+          {/* <h2 className="charHistoryheading">Chat history</h2>
           <Divider />
           <Button
             onClick={() => {
@@ -74,7 +129,7 @@ export const ChatsHistory = ({
                   />
                 );
               })}
-          </div>
+          </div> */}
         </SwipeableDrawer>
       </div>
       {!ismobile ? (
@@ -127,7 +182,7 @@ export const ChatsHistory = ({
 
             <div>
               {threadId && threadId ? (
-                <ThreadFiles threadId={threadId.threadid} fileData={fileData} />
+                <ThreadFiles threadId={threadId.threadid} />
               ) : null}
             </div>
           </div>
@@ -137,33 +192,32 @@ export const ChatsHistory = ({
   );
 };
 
-const ThreadFiles = ({ threadId, fileData }) => {
+const ThreadFiles = ({ threadId }) => {
+  const filesArray = useSelector((state) => state.file);
+  const dispatch = useDispatch();
+
   console.count("========*****render*****======");
-  console.log("======fileData", fileData);
-  const [files, setFiles] = useState(fileData);
-  console.log("====files", files);
 
   const handleDelete = async (fileId, storeId) => {
     try {
       await deleteFiles(fileId, storeId);
       // Update the state to remove the deleted file
-      setFiles((prevFiles) =>
-        prevFiles.filter((file) => file.fileid !== fileId)
-      );
+      const newFiles = filesArray.filter((file) => file.fileid !== fileId);
+      dispatch(setThreadFiles(newFiles || []));
+      // setFiles((prevFiles) =>
+      //   prevFiles.filter((file) => file.fileid !== fileId)
+      // );
     } catch (error) {
       console.error("Error deleting file:", error);
     }
   };
 
-  // Sync files state with fileData prop changes
-  // useEffect(() => {
-  //   setFiles((prev) => [...prev, ...fileData]);
-  // }, [fileData]);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await getThreadAlFiles(threadId);
-        setFiles(data); // Correctly set the fetched data
+        // setFiles(data); // Correctly set the fetched data
+        dispatch(setThreadFiles(data || []));
       } catch (error) {
         console.error("Error fetching files:", error);
       }
@@ -183,9 +237,8 @@ const ThreadFiles = ({ threadId, fileData }) => {
         flexDirection: "column",
       }}
     >
-      {files &&
-        files.map((item) => {
-          console.log("=======itemssss", item);
+      {filesArray &&
+        filesArray.map((item) => {
           return (
             <div
               key={item.fileid} // Add a key to each item
