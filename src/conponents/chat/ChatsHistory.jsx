@@ -55,6 +55,7 @@ export const ChatsHistory = ({
               style={{
                 overflowY: "auto",
                 height: "60vh",
+                width: "20rem",
               }}
             >
               <h2 className="charHistoryheading">Chat history</h2>
