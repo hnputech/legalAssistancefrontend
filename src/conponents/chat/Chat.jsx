@@ -34,6 +34,10 @@ import Badge from "@mui/material/Badge";
 import StorageIcon from "@mui/icons-material/Storage";
 import { useSelector, useDispatch } from "react-redux";
 import { addFile, setThreadFiles } from "../../store/features/chatSlice";
+import { marked } from "marked";
+// import marked from "marked";
+
+const renderer = new marked.Renderer();
 
 const modellist = [
   { name: "Equall/Saul-Instruct-v1", icon: sualbot },
@@ -84,21 +88,6 @@ export const Chat = () => {
     const fetchData = async () => {
       setOpen(true);
 
-      const data = await getUserAlMassages(threadId.threadid);
-      const result = await transformData(data);
-      setOpen(false);
-
-      setMessages(result);
-    };
-
-    if (threadId && teststate) {
-      fetchData();
-    }
-  }, [threadId]);
-  useEffect(() => {
-    const fetchData = async () => {
-      setOpen(true);
-
       try {
         const result = await getCurrentUserData(userId);
         const reversedata = result.reverse();
@@ -116,9 +105,39 @@ export const Chat = () => {
       fetchData();
     }
   }, [isToggled]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setOpen(true);
+
+        const data = await getUserAlMassages(threadId.threadid);
+        const result = await transformData(data);
+        setOpen(false);
+
+        setMessages(result);
+      } catch (error) {
+        console.log("=====error", error);
+        setOpen(false);
+
+        setMessages([
+          {
+            message: "Hello, I'm Law GPT! Ask me anything!",
+            sentTime: "just now",
+            sender: "Equall/Saul-Instruct-v1",
+          },
+        ]);
+      }
+    };
+
+    if (threadId && teststate) {
+      fetchData();
+    }
+  }, [threadId]);
   const toggleButton = () => {
     setIsToggled(!isToggled);
     hasRunRef.current = false;
+    handleNewChat();
   };
 
   const handleSend = async (message) => {
@@ -183,92 +202,74 @@ export const Chat = () => {
       return { role: role, content: messageObject.message };
     });
 
-    // Get the request body set up with the model we plan to use
-    // and the messages which we formatted above. We add a system message in the front to'
-    // determine how we want chatGPT to act.
-    const apiRequestBody = {
-      chat: [
-        ...apiMessages.slice(1), // The messages from our chat with ChatGPT
-      ],
-      model: model,
-    };
-
-    // =================
+    const tid = threadId && threadId.threadid ? threadId.threadid : threadId;
+    const title = tid ? userData.find((item) => item.threadid === tid) : null;
 
     try {
       const payloadObj = {
         query: chatMessages[chatMessages.length - 1],
-        threadId: threadId && threadId.threadid ? threadId.threadid : threadId,
+        threadId: tid,
         assitanceId: userData[0].assistenceid
           ? userData[0].assistenceid
           : userData.id,
         userId: userId,
         titleUpdate: false,
+        title: title && title.title,
         // isTitleUpdate: threadId && JSON.parse(threadId).titleUpdated,
       };
       const response = await chats(payloadObj);
-      setMessages([
-        ...chatMessages,
-        {
-          message: response.chat,
-          sender: model,
-        },
-      ]);
-      const costCalculator =
-        calculateCost(
-          (model = "gpt35turbo" ? 0.5 : 5),
-          response.tokkens.promptTokens
-        ) +
-        calculateCost(
-          (model = "gpt35turbo" ? 1.5 : 15),
-          response.tokkens.completionTokens
-        );
-      setTokenCost({
-        token: response.tokkens.totalTokens,
-        cost: costCalculator,
-      });
-      if (!threadId) {
-        setThreadId(response.thread_id);
-        setTestState(false);
-
-        setUserData((prevState) => {
-          const newState = {
-            assistenceid: userData[0].assistenceid,
-            threadid: response.thread_id,
-            title: response.title,
-            isttileupdated: response.titleUpdated,
-          };
-
-          return [newState, ...prevState];
+      if (response) {
+        setMessages([
+          ...chatMessages,
+          {
+            message: response.chat,
+            sender: model,
+          },
+        ]);
+        const costCalculator =
+          calculateCost(
+            (model = "gpt35turbo" ? 0.5 : 5),
+            response.tokkens.promptTokens
+          ) +
+          calculateCost(
+            (model = "gpt35turbo" ? 1.5 : 15),
+            response.tokkens.completionTokens
+          );
+        setTokenCost({
+          token: response.tokkens.totalTokens,
+          cost: costCalculator,
         });
 
-        // for testing
-        // const myresult = await getCurrentUserData(userId);
+        if (!threadId) {
+          setThreadId(response.thread_id);
+          setTestState(false);
 
-        // const newUJSerValue = {
-        //   ...userData,
-        //   threadid: userData.threadid.push({
-        //     thread_id: threadId,
-        //     title: "untitled",
-        //   }),
-        // };
+          setUserData((prevState) => {
+            const newState = {
+              assistenceid: userData[0].assistenceid,
+              threadid: response.thread_id,
+              title: response.title,
+              isttileupdated: response.titleUpdated,
+            };
 
-        const newThread = {
-          thread_id: response.thread_id,
-          title: "untitled",
-        };
+            return [newState, ...prevState];
+          });
+        } else if (title.title === "untitled") {
+          setUserData((prevUserState) => {
+            const newdata = prevUserState.map((item) => {
+              if (item.threadid === tid) {
+                return { ...item, title: response.title };
+              } else {
+                return item;
+              }
+            });
 
-        // setUserData((prevState) => {
-        //   const updatedThreads = prevState.threadid
-        //     ? [newThread, ...prevState.threadid]
-        //     : [newThread];
-        //   return { ...prevState, threadid: updatedThreads };
-        // });
-
-        // testing end
+            return newdata;
+          });
+        }
       }
     } catch (error) {
-      console.error("Error uploading file:", error);
+      console.error("Error  in chat:", error);
     }
 
     setIsTyping(false);
@@ -303,6 +304,7 @@ export const Chat = () => {
     try {
       const response = await axios.post(
         // "http://localhost:3001/upload",
+        // "https://legalbackedn2-aondtyyl6a-uc.a.run.app/upload",
         "https://legalbackedn2-aondtyyl6a-uc.a.run.app/upload",
         formData,
         {
@@ -313,33 +315,20 @@ export const Chat = () => {
       );
 
       dispatch(addFile(response.data.filesdata));
-      // const msg = response.data.filesdata.map((item) => {
-      //   const filesize = item.size / 1000;
-      //   const unit = filesize >= 1000 ? "MB" : "KB";
-      //   const divider = unit === "MB" ? 1000 : 1;
-      //   return {
-      //     message: `<div class="message">
-      //     <div class="pdf-thumbnail">
-      //         <img src=${pdf} alt="PDF Icon">
-      //     </div>
-      //     <div class="pdf-details" >
-      //         <p class="pdf-title">${item.name}</p>
-      //         <p class="pdf-size">Size: ${(filesize / divider).toFixed(
-      //           2
-      //         )} ${unit}</p>
-      //     </div>
-      // </div>`,
-      //     sender: "user",
-      //     fileUrl: item.name,
-      //     direction: "outgoing",
-      //     // isFile: true, // Indicator for file message
-      //     type: "html",
-      //   };
-      // });
-      // setMessages((prevMessages) => [...prevMessages, ...msg]);
 
       if (!threadId) {
-        setThreadId(response.data.threadId);
+        setThreadId(response.data.threadData.threadid);
+
+        setUserData((prevState) => {
+          const newState = {
+            assistenceid: userData[0].assistenceid,
+            threadid: response.data.threadData.threadid,
+            title: response.data.threadData.title,
+            isttileupdated: response.data.threadData.titleUpdated,
+          };
+
+          return [newState, ...prevState];
+        });
       }
       setIsUploading(false);
     } catch (error) {
@@ -451,6 +440,7 @@ export const Chat = () => {
             }}
           >
             <MessageList
+              className="test"
               scrollBehavior="smooth"
               typingIndicator={
                 isTyping ? (
@@ -461,6 +451,10 @@ export const Chat = () => {
               }
             >
               {messages.map((message, i) => {
+                const newMsg = {
+                  ...message,
+                  message: marked.parse(message.message),
+                };
                 // Determine if the current message is the last one from the same user in a sequence
                 const showAvatar =
                   i === messages.length - 1 ||
@@ -470,25 +464,27 @@ export const Chat = () => {
                 return (
                   <Message
                     key={i}
-                    model={message}
-                    style={{
-                      marginLeft:
-                        (message.sender === "Equall/Saul-Instruct-v1" ||
-                          message.sender === "AdaptLLM/law-chat") &&
-                        !showAvatar
-                          ? "50px"
-                          : "",
-                      marginRight:
-                        (message.sender === "Equall/Saul-Instruct-v1" ||
-                          message.sender === "AdaptLLM/law-chat") &&
-                        !showAvatar
-                          ? "50px"
-                          : "",
-                      marginTop: "10px",
-                    }}
+                    className="testting"
+                    model={newMsg}
+                    // style={{
+                    //   marginLeft:
+                    //     (message.sender === "Equall/Saul-Instruct-v1" ||
+                    //       message.sender === "AdaptLLM/law-chat") &&
+                    //     !showAvatar
+                    //       ? "30px"
+                    //       : "",
+                    //   marginRight:
+                    //     (message.sender === "Equall/Saul-Instruct-v1" ||
+                    //       message.sender === "AdaptLLM/law-chat") &&
+                    //     !showAvatar
+                    //       ? "30px"
+                    //       : "",
+                    //   marginTop: "10px",
+                    // }}
                   >
                     {showAvatar && (
                       <Avatar
+                        size={ismobile ? "sm" : "md"}
                         name={message.sender}
                         src={
                           message.sender === "Equall/Saul-Instruct-v1"

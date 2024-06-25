@@ -6,6 +6,7 @@ export const chats = async ({
   assitanceId,
   userId,
   titleUpdate,
+  title,
 }) => {
   try {
     const response = await axioxInstance.post("/chat/", {
@@ -14,10 +15,11 @@ export const chats = async ({
       assitanceId,
       userId,
       titleUpdate,
+      title,
     });
     return response.data;
   } catch (err) {
-    console.log("erro");
+    console.log("erro", err);
   }
 };
 

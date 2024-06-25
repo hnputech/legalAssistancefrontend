@@ -196,8 +196,6 @@ const ThreadFiles = ({ threadId }) => {
   const filesArray = useSelector((state) => state.file);
   const dispatch = useDispatch();
 
-  console.count("========*****render*****======");
-
   const handleDelete = async (fileId, storeId) => {
     try {
       await deleteFiles(fileId, storeId);
