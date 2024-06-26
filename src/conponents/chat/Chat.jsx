@@ -548,10 +548,7 @@ export const Chat = () => {
             onChange={handleFileUpload}
           />
         </MainContainer>
-        <div
-          ref={inputRef}
-          style={{ height: "50px", backgroundColor: "red" }}
-        ></div>
+        <div ref={inputRef} style={{ height: "50px" }}></div>
       </Box>
     </div>
   );
