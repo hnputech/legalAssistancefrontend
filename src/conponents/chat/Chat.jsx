@@ -92,7 +92,6 @@ export const Chat = () => {
   const handleFocus = () => {
     console.log("=========");
     if (inputRef.current) {
-      inputRef.current.style.backgroundColor = "red";
       inputRef.current.style.paddingBottom = "20px";
     }
     setTimeout(() => {
@@ -115,7 +114,6 @@ export const Chat = () => {
 
   const handleBlur = () => {
     if (inputRef.current) {
-      inputRef.current.style.backgroundColor = "pink";
       inputRef.current.style.paddingBottom = "0";
     }
   };
@@ -548,9 +546,6 @@ export const Chat = () => {
                 disabled={isTyping || isUploading}
                 onFocus={handleFocus} // Attach the onFocus event
                 onBlur={handleBlur}
-                // onClick={() => {
-                //   useKeyboardAwareFocus(inputRef);
-                // }}
               />
             </ChatContainer>
           </div>
@@ -559,18 +554,9 @@ export const Chat = () => {
             ref={fileInputRef}
             style={{ display: "none" }}
             multiple
-            // onChange={handleFileChange}
             onChange={handleFileUpload}
           />
         </MainContainer>
-        {/* <div
-          ref={inputRef}
-          style={{
-            height: "50px",
-            backgroundColor: "white",
-            paddingTop: "20px",
-          }}
-        ></div> */}
       </Box>
     </div>
   );
