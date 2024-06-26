@@ -35,9 +35,8 @@ import StorageIcon from "@mui/icons-material/Storage";
 import { useSelector, useDispatch } from "react-redux";
 import { addFile, setThreadFiles } from "../../store/features/chatSlice";
 import { marked } from "marked";
-// import marked from "marked";
 
-const renderer = new marked.Renderer();
+import useKeyboardAwareFocus from "../../hooks/useKeyboardAwareFocus"; // Adjust the import path as needed
 
 const modellist = [
   { name: "Equall/Saul-Instruct-v1", icon: sualbot },
@@ -76,6 +75,13 @@ export const Chat = () => {
   const urlParams = new URLSearchParams(queryString);
   const model = isToggled ? "gpt440" : "gpt35turbo";
   let userId = urlParams.get("user");
+
+  // scroll the mobile down
+  const inputRef = useRef(null);
+
+  useKeyboardAwareFocus(inputRef);
+  //  scroll end
+
   if (!userId) {
     userId = model;
   }
