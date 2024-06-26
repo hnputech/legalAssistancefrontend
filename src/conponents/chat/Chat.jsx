@@ -79,7 +79,6 @@ export const Chat = () => {
   // scroll the mobile down
   const inputRef = useRef(null);
 
-  useKeyboardAwareFocus(inputRef);
   //  scroll end
 
   if (!userId) {
@@ -89,6 +88,26 @@ export const Chat = () => {
   // temporary state
 
   const [open, setOpen] = useState(false);
+
+  const handleFocus = () => {
+    console.log("=========");
+    setTimeout(() => {
+      if (
+        inputRef.current &&
+        typeof inputRef.current.scrollIntoView === "function"
+      ) {
+        // Scroll the input element into view smoothly and center it in the viewport
+        inputRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      } else {
+        console.error(
+          "scrollIntoView is not a function or inputRef.current is null"
+        );
+      }
+    }, 200); // Timeout to delay the scroll action
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -514,6 +533,10 @@ export const Chat = () => {
               attachButton={true}
               onAttachClick={handleAttachClick}
               disabled={isTyping || isUploading}
+              onFocus={handleFocus} // Attach the onFocus event
+              // onClick={() => {
+              //   useKeyboardAwareFocus(inputRef);
+              // }}
             />
           </ChatContainer>
           <input
@@ -525,6 +548,10 @@ export const Chat = () => {
             onChange={handleFileUpload}
           />
         </MainContainer>
+        <div
+          ref={inputRef}
+          style={{ height: "50px", backgroundColor: "red" }}
+        ></div>
       </Box>
     </div>
   );
