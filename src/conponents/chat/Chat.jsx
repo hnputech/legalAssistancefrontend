@@ -550,7 +550,11 @@ export const Chat = () => {
         </MainContainer>
         <div
           ref={inputRef}
-          style={{ height: "50px", backgroundColor: "transparent" }}
+          style={{
+            height: "50px",
+            backgroundColor: "white",
+            paddingTop: "20px",
+          }}
         ></div>
       </Box>
     </div>
