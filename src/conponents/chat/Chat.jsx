@@ -92,7 +92,8 @@ export const Chat = () => {
   const handleFocus = () => {
     console.log("=========");
     if (inputRef.current) {
-      inputRef.current.style.backgroundColor = "lightblue";
+      inputRef.current.style.backgroundColor = "red";
+      inputRef.current.style.padding = "40px";
     }
     setTimeout(() => {
       if (
@@ -366,7 +367,7 @@ export const Chat = () => {
   };
 
   return (
-    <div style={{ display: "flex", width: "100%" }} ref={inputRef}>
+    <div style={{ display: "flex", width: "100%" }}>
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={open}
@@ -459,89 +460,92 @@ export const Chat = () => {
               </Badge>
             </div>
           </div>
-          <ChatContainer
-            style={{
-              paddingTop: "10px",
-              paddingBottom: "10px",
+          <div ref={inputRef}>
+            <ChatContainer
+              style={{
+                paddingTop: "10px",
+                paddingBottom: "10px",
 
-              height: "85vh",
-            }}
-          >
-            <MessageList
-              className="test"
-              scrollBehavior="smooth"
-              typingIndicator={
-                isTyping ? (
-                  <TypingIndicator content="Assistant is typing" />
-                ) : isUploading ? (
-                  <TypingIndicator content="file is uploading" />
-                ) : null
-              }
+                height: "85vh",
+              }}
             >
-              {messages.map((message, i) => {
-                const newMsg = {
-                  ...message,
-                  message: marked.parse(message.message),
-                };
-                // Determine if the current message is the last one from the same user in a sequence
-                const showAvatar =
-                  i === messages.length - 1 ||
-                  (messages[i + 1] &&
-                    messages[i + 1].sender !== message.sender);
+              <MessageList
+                className="test"
+                scrollBehavior="smooth"
+                typingIndicator={
+                  isTyping ? (
+                    <TypingIndicator content="Assistant is typing" />
+                  ) : isUploading ? (
+                    <TypingIndicator content="file is uploading" />
+                  ) : null
+                }
+              >
+                {messages.map((message, i) => {
+                  const newMsg = {
+                    ...message,
+                    message: marked.parse(message.message),
+                  };
+                  // Determine if the current message is the last one from the same user in a sequence
+                  const showAvatar =
+                    i === messages.length - 1 ||
+                    (messages[i + 1] &&
+                      messages[i + 1].sender !== message.sender);
 
-                return (
-                  <Message
-                    key={i}
-                    className="testting"
-                    model={newMsg}
-                    // style={{
-                    //   marginLeft:
-                    //     (message.sender === "Equall/Saul-Instruct-v1" ||
-                    //       message.sender === "AdaptLLM/law-chat") &&
-                    //     !showAvatar
-                    //       ? "30px"
-                    //       : "",
-                    //   marginRight:
-                    //     (message.sender === "Equall/Saul-Instruct-v1" ||
-                    //       message.sender === "AdaptLLM/law-chat") &&
-                    //     !showAvatar
-                    //       ? "30px"
-                    //       : "",
-                    //   marginTop: "10px",
-                    // }}
-                  >
-                    {showAvatar && (
-                      <Avatar
-                        size={ismobile ? "sm" : "md"}
-                        name={message.sender}
-                        src={
-                          message.sender === "Equall/Saul-Instruct-v1"
-                            ? sualbot
-                            : message.sender === "AdaptLLM/law-chat"
-                            ? bot
-                            : user
-                        }
-                      />
-                    )}
-                  </Message>
-                );
-              })}
-            </MessageList>
-            <MessageInput
-              placeholder="Type message here"
-              onSend={handleSend}
-              style={{ paddingTop: "15px" }}
-              // attachButton={false}
-              // onAttachClick={handleAttach}
-              attachButton={true}
-              onAttachClick={handleAttachClick}
-              disabled={isTyping || isUploading}
-              onFocus={handleFocus} // Attach the onFocus event
-              // onClick={() => {
-              //   useKeyboardAwareFocus(inputRef);
-              // }}
-            />
-          </ChatContainer>
+                  return (
+                    <Message
+                      key={i}
+                      className="testting"
+                      model={newMsg}
+                      // style={{
+                      //   marginLeft:
+                      //     (message.sender === "Equall/Saul-Instruct-v1" ||
+                      //       message.sender === "AdaptLLM/law-chat") &&
+                      //     !showAvatar
+                      //       ? "30px"
+                      //       : "",
+                      //   marginRight:
+                      //     (message.sender === "Equall/Saul-Instruct-v1" ||
+                      //       message.sender === "AdaptLLM/law-chat") &&
+                      //     !showAvatar
+                      //       ? "30px"
+                      //       : "",
+                      //   marginTop: "10px",
+                      // }}
+                    >
+                      {showAvatar && (
+                        <Avatar
+                          size={ismobile ? "sm" : "md"}
+                          name={message.sender}
+                          src={
+                            message.sender === "Equall/Saul-Instruct-v1"
+                              ? sualbot
+                              : message.sender === "AdaptLLM/law-chat"
+                              ? bot
+                              : user
+                          }
+                        />
+                      )}
+                    </Message>
+                  );
+                })}
+              </MessageList>
+
+              <MessageInput
+                placeholder="Type message here"
+                onSend={handleSend}
+                style={{ paddingTop: "15px" }}
+                // attachButton={false}
+                // onAttachClick={handleAttach}
+                attachButton={true}
+                onAttachClick={handleAttachClick}
+                disabled={isTyping || isUploading}
+                onFocus={handleFocus} // Attach the onFocus event
+                // onClick={() => {
+                //   useKeyboardAwareFocus(inputRef);
+                // }}
+              />
+            </ChatContainer>
+          </div>
           <input
             type="file"
             ref={fileInputRef}
