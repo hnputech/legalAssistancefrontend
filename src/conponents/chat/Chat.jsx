@@ -91,10 +91,10 @@ export const Chat = () => {
 
   const handleFocus = () => {
     console.log("=========");
-    if (inputRef.current) {
-      inputRef.current.style.backgroundColor = "red";
-      inputRef.current.style.padding = "40px";
-    }
+    // if (inputRef.current) {
+    //   inputRef.current.style.backgroundColor = "red";
+    //   inputRef.current.style.padding = "40px";
+    // }
     setTimeout(() => {
       if (
         inputRef.current &&
