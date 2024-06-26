@@ -91,6 +91,9 @@ export const Chat = () => {
 
   const handleFocus = () => {
     console.log("=========");
+    if (inputRef.current) {
+      inputRef.current.style.backgroundColor = "lightblue";
+    }
     setTimeout(() => {
       if (
         inputRef.current &&
@@ -363,7 +366,7 @@ export const Chat = () => {
   };
 
   return (
-    <div style={{ display: "flex", width: "100%" }}>
+    <div style={{ display: "flex", width: "100%" }} ref={inputRef}>
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={open}
@@ -548,14 +551,14 @@ export const Chat = () => {
             onChange={handleFileUpload}
           />
         </MainContainer>
-        <div
+        {/* <div
           ref={inputRef}
           style={{
             height: "50px",
             backgroundColor: "white",
             paddingTop: "20px",
           }}
-        ></div>
+        ></div> */}
       </Box>
     </div>
   );
