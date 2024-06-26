@@ -7,7 +7,7 @@ import { store } from "./store/store";
 function App() {
   return (
     <Provider store={store}>
-      <div className="App">
+      <div className="App" style={{ height: "90vh" }}>
         <Chat />
       </div>
     </Provider>
