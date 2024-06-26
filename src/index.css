@@ -13,6 +13,34 @@
   -moz-osx-font-smoothing: grayscale;
   /* -webkit-text-size-adjust: 100%; */
 }
+/*  test*/
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  box-sizing: border-box;
+  overflow: hidden; /* Prevents body scrolling */
+}
+
+.main-content {
+  flex: 1; /* Make the main content area take the remaining space */
+  overflow-y: auto; /* Ensure the main content area is scrollable */
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+/* end  */
 
 a {
   font-weight: 500;
