@@ -113,6 +113,13 @@ export const Chat = () => {
     }, 200); // Timeout to delay the scroll action
   };
 
+  const handleBlur = () => {
+    if (inputRef.current) {
+      inputRef.current.style.backgroundColor = "pink";
+      inputRef.current.style.paddingBottom = "0";
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setOpen(true);
@@ -540,6 +547,7 @@ export const Chat = () => {
                 onAttachClick={handleAttachClick}
                 disabled={isTyping || isUploading}
                 onFocus={handleFocus} // Attach the onFocus event
+                onBlur={handleBlur}
                 // onClick={() => {
                 //   useKeyboardAwareFocus(inputRef);
                 // }}
