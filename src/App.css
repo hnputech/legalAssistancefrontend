@@ -125,6 +125,12 @@
   padding-bottom: 10px;
   padding-right: 10px;
 }
+
+@media screen and (max-width: 580px) {
+  .chatHeading {
+    width: 80%;
+  }
+}
 .chatHeading:hover {
   background-color: azure;
 }
