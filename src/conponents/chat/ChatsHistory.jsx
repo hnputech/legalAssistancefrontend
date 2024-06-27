@@ -59,7 +59,7 @@ export const ChatsHistory = ({
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div
               style={{
-                overflowY: "auto",
+                // overflowY: "auto",
                 height: "15vh",
                 // width: "20rem",
               }}
