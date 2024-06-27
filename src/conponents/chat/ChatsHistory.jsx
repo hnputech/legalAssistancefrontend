@@ -28,6 +28,10 @@ export const ChatsHistory = ({
     setDrawer(false);
   };
 
+  const newChat = () => {
+    handleNewChat();
+    setDrawer(false);
+  };
   return (
     <div
       style={{
@@ -79,7 +83,7 @@ export const ChatsHistory = ({
                     boxShadow: "none",
                   },
                 }}
-                onClick={() => handleNewChat()}
+                onClick={() => newChat()}
                 variant="text"
                 style={{ textAlign: "center", width: "100%", padding: "10px" }}
               >
