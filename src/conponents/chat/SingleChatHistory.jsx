@@ -30,6 +30,7 @@ export const SingleChatHistory = ({
   chatData,
   handleChatChange,
   setDrawer,
+  setTitle,
 }) => {
   return (
     <div>
@@ -37,6 +38,7 @@ export const SingleChatHistory = ({
         className="chatHeading"
         onClick={() => {
           handleChatChange(chatData);
+          setTitle(chatData.title);
 
           if (setDrawer) {
             setDrawer(false);

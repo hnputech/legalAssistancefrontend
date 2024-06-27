@@ -47,9 +47,10 @@ export const Chat = () => {
     {
       message: "Hello, I'm Law GPT! Ask me anything!",
       sentTime: "just now",
-      sender: "Equall/Saul-Instruct-v1",
+      sender: "assistant",
     },
   ]);
+
   const [userData, setUserData] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -64,6 +65,7 @@ export const Chat = () => {
   const [threadId, setThreadId] = useState(null);
   const [isToggled, setIsToggled] = useState(true);
 
+  const [title, setTitle] = useState("");
   const filesArray = useSelector((state) => state.file);
   const dispatch = useDispatch();
 
@@ -94,22 +96,22 @@ export const Chat = () => {
     if (inputRef.current) {
       inputRef.current.style.paddingBottom = "20px";
     }
-    setTimeout(() => {
-      if (
-        inputRef.current &&
-        typeof inputRef.current.scrollIntoView === "function"
-      ) {
-        // Scroll the input element into view smoothly and center it in the viewport
-        inputRef.current.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      } else {
-        console.error(
-          "scrollIntoView is not a function or inputRef.current is null"
-        );
-      }
-    }, 200); // Timeout to delay the scroll action
+    // setTimeout(() => {
+    //   if (
+    //     inputRef.current &&
+    //     typeof inputRef.current.scrollIntoView === "function"
+    //   ) {
+    //     // Scroll the input element into view smoothly and center it in the viewport
+    //     inputRef.current.scrollIntoView({
+    //       behavior: "smooth",
+    //       block: "center",
+    //     });
+    //   } else {
+    //     console.error(
+    //       "scrollIntoView is not a function or inputRef.current is null"
+    //     );
+    //   }
+    // }, 200); // Timeout to delay the scroll action
   };
 
   const handleBlur = () => {
@@ -149,7 +151,17 @@ export const Chat = () => {
         const result = await transformData(data);
         setOpen(false);
 
-        setMessages(result);
+        setMessages(
+          result.length > 0
+            ? result
+            : [
+                {
+                  message: "Hello, I'm Law GPT! Ask me anything!",
+                  sentTime: "just now",
+                  sender: "assistant",
+                },
+              ]
+        );
       } catch (error) {
         console.log("=====error", error);
         setOpen(false);
@@ -158,7 +170,7 @@ export const Chat = () => {
           {
             message: "Hello, I'm Law GPT! Ask me anything!",
             sentTime: "just now",
-            sender: "Equall/Saul-Instruct-v1",
+            sender: "assistant",
           },
         ]);
       }
@@ -200,6 +212,7 @@ export const Chat = () => {
   const handleNewChat = () => {
     setThreadId(null);
     dispatch(setThreadFiles([]));
+    setTitle("");
     setTestState(false);
     setTokenCost({
       token: 0,
@@ -209,7 +222,7 @@ export const Chat = () => {
       {
         message: "Hello, I'm Law GPT! Ask me anything!",
         sentTime: "just now",
-        sender: "Equall/Saul-Instruct-v1",
+        sender: "assistant",
       },
     ]);
   };
@@ -275,6 +288,7 @@ export const Chat = () => {
         });
 
         if (!threadId) {
+          setTitle(response.title);
           setThreadId(response.thread_id);
           setTestState(false);
 
@@ -388,6 +402,7 @@ export const Chat = () => {
           handleNewChat={handleNewChat}
           handleUploadFile={handleUploadFile}
           threadId={threadId}
+          setTitle={setTitle}
         />
       ) : null}
 
@@ -416,6 +431,7 @@ export const Chat = () => {
                 handleNewChat={handleNewChat}
                 handleUploadFile={handleUploadFile}
                 threadId={threadId}
+                setTitle={setTitle}
               />
             ) : null}
             <div className="toggle-container">
@@ -437,13 +453,18 @@ export const Chat = () => {
 
           <div
             style={{
-              marginTop: "15px",
+              marginTop: "7px",
               display: "flex",
               justifyContent: "space-between",
               marginRight: "30px",
             }}
           >
-            <div style={{ marginLeft: "10px", marginBottom: "20px" }}>
+            <div
+              style={{
+                marginLeft: "10px",
+                marginBottom: title ? "0px" : "13px",
+              }}
+            >
               <span>
                 {" "}
                 <span style={{ fontWeight: "bold" }}>
@@ -465,6 +486,9 @@ export const Chat = () => {
               </Badge>
             </div>
           </div>
+          <Divider>
+            {title.length > 20 ? title.substring(0, 20) + "..." : title}
+          </Divider>
           <div ref={inputRef}>
             <ChatContainer
               style={{
@@ -522,10 +546,10 @@ export const Chat = () => {
                           size={ismobile ? "sm" : "md"}
                           name={message.sender}
                           src={
-                            message.sender === "Equall/Saul-Instruct-v1"
-                              ? sualbot
-                              : message.sender === "AdaptLLM/law-chat"
+                            message.sender === "assistant" && isToggled
                               ? bot
+                              : message.sender === "assistant" && !isToggled
+                              ? sualbot
                               : user
                           }
                         />

@@ -126,18 +126,20 @@
   padding-right: 10px;
 }
 
-@media screen and (max-width: 580px) {
+/* @media screen and (max-width: 580px) {
   .chatHeading {
     width: 80%;
   }
-}
+} */
 .chatHeading:hover {
   background-color: azure;
 }
 
 @media screen and (max-width: 580px) {
   .css-4t3x6l-MuiPaper-root-MuiDrawer-paper {
-    width: 60%;
+    /* width: 60%; */
+    width: 20rem;
+    border-right: 1px solid rgba(0, 0, 0, 0.12);
   }
 }
 
@@ -148,7 +150,7 @@
   display: flex;
   align-items: center;
   justify-content: end;
-  height: 50px;
+  height: 58px;
   margin-right: 20px;
 }
 

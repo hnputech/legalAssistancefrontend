@@ -17,10 +17,16 @@ export const ChatsHistory = ({
   handleNewChat,
   handleUploadFile,
   threadId,
+  setTitle,
 }) => {
   const [drawer, setDrawer] = useState(false);
 
   const ismobile = useIsMobile();
+
+  const handleThreadUpdate = (threadId) => {
+    handleChatChange(threadId);
+    setDrawer(false);
+  };
 
   return (
     <div
@@ -54,13 +60,19 @@ export const ChatsHistory = ({
             <div
               style={{
                 overflowY: "auto",
-                height: "60vh",
-                width: "20rem",
+                height: "15vh",
+                // width: "20rem",
               }}
             >
               <h2 className="charHistoryheading">Chat history</h2>
               <Divider />
               <Button
+                sx={{
+                  "&:focus": {
+                    outline: "none",
+                    boxShadow: "none",
+                  },
+                }}
                 onClick={() => handleNewChat()}
                 variant="text"
                 style={{ textAlign: "center", width: "100%", padding: "10px" }}
@@ -68,25 +80,35 @@ export const ChatsHistory = ({
                 Create new chat
               </Button>
               <Divider />
-
+            </div>
+            <div
+              style={{
+                overflowY: "auto",
+                height: "45vh",
+                // width: "20rem",
+              }}
+            >
               <div>
                 {userData &&
                   userData.map((item) => {
                     return (
                       <SingleChatHistory
                         chatData={item}
-                        handleChatChange={handleChatChange}
+                        handleChatChange={handleThreadUpdate}
+                        setTitle={setTitle}
                       />
                     );
                   })}
               </div>
             </div>
 
-            <div style={{ height: "40vh", overflowY: "auto" }}>
+            <div>
               <Divider />
               <h2 className="charHistoryheading">Uploaded Files</h2>
               <Divider />
-              <Button
+            </div>
+            <div style={{ height: "30vh", overflowY: "auto" }}>
+              {/* <Button
                 onClick={() => {
                   handleUploadFile();
                   setDrawer(false);
@@ -95,7 +117,7 @@ export const ChatsHistory = ({
                 style={{ textAlign: "center", width: "100%", padding: "10px" }}
               >
                 Upload{" "}
-              </Button>
+              </Button> */}
               <Divider />
 
               <div>
@@ -105,45 +127,20 @@ export const ChatsHistory = ({
               </div>
             </div>
           </div>
-          {/* <h2 className="charHistoryheading">Chat history</h2>
-          <Divider />
-          <Button
-            onClick={() => {
-              handleNewChat();
-              setDrawer(false);
-            }}
-            variant="text"
-            style={{ textAlign: "center", width: "100%", padding: "10px" }}
-          >
-            Create new chat
-          </Button>
-          <Divider />
-          <div>
-            {userData &&
-              userData.map((item) => {
-                return (
-                  <SingleChatHistory
-                    chatData={item}
-                    handleChatChange={handleChatChange}
-                    setDrawer={setDrawer}
-                    key={item.threadid}
-                  />
-                );
-              })}
-          </div> */}
         </SwipeableDrawer>
       </div>
       {!ismobile ? (
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div
-            style={{
-              overflowY: "auto",
-              height: "60vh",
-            }}
-          >
+          <div>
             <h2 className="charHistoryheading">Chat history</h2>
             <Divider />
             <Button
+              sx={{
+                "&:focus": {
+                  outline: "none",
+                  boxShadow: "none",
+                },
+              }}
               onClick={() => handleNewChat()}
               variant="text"
               style={{ textAlign: "center", width: "100%", padding: "10px" }}
@@ -151,25 +148,34 @@ export const ChatsHistory = ({
               Create new chat
             </Button>
             <Divider />
-
+          </div>
+          <div
+            style={{
+              overflowY: "auto",
+              height: "60vh",
+            }}
+          >
             <div>
               {userData &&
                 userData.map((item) => {
                   return (
                     <SingleChatHistory
                       chatData={item}
-                      handleChatChange={handleChatChange}
+                      handleChatChange={handleThreadUpdate}
+                      setTitle={setTitle}
                     />
                   );
                 })}
             </div>
           </div>
 
-          <div style={{ height: "40vh", overflowY: "auto" }}>
+          <div>
             <Divider />
             <h2 className="charHistoryheading">Uploaded Files</h2>
             <Divider />
-            <Button
+          </div>
+          <div style={{ height: "30vh", overflowY: "auto" }}>
+            {/* <Button
               onClick={() => {
                 handleUploadFile();
                 setDrawer(false);
@@ -179,7 +185,7 @@ export const ChatsHistory = ({
             >
               Upload{" "}
             </Button>
-            <Divider />
+            <Divider /> */}
 
             <div>
               {threadId && threadId ? (
