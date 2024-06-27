@@ -96,22 +96,24 @@ export const Chat = () => {
     if (inputRef.current) {
       inputRef.current.style.paddingBottom = "20px";
     }
-    // setTimeout(() => {
-    //   if (
-    //     inputRef.current &&
-    //     typeof inputRef.current.scrollIntoView === "function"
-    //   ) {
-    //     // Scroll the input element into view smoothly and center it in the viewport
-    //     inputRef.current.scrollIntoView({
-    //       behavior: "smooth",
-    //       block: "center",
-    //     });
-    //   } else {
-    //     console.error(
-    //       "scrollIntoView is not a function or inputRef.current is null"
-    //     );
-    //   }
-    // }, 200); // Timeout to delay the scroll action
+    if (ismobile) {
+      setTimeout(() => {
+        if (
+          inputRef.current &&
+          typeof inputRef.current.scrollIntoView === "function"
+        ) {
+          // Scroll the input element into view smoothly and center it in the viewport
+          inputRef.current.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        } else {
+          console.error(
+            "scrollIntoView is not a function or inputRef.current is null"
+          );
+        }
+      }, 200); // Timeout to delay the scroll action
+    }
   };
 
   const handleBlur = () => {
