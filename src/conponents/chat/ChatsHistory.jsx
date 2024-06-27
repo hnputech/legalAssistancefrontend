@@ -56,7 +56,13 @@ export const ChatsHistory = ({
           onClose={() => setDrawer(false)}
           onOpen={() => setDrawer(true)}
         >
-          <div style={{ display: "flex", flexDirection: "column" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
+            }}
+          >
             <div
               style={{
                 // overflowY: "auto",
