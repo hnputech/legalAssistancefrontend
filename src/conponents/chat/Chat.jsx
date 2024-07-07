@@ -34,14 +34,8 @@ import Badge from "@mui/material/Badge";
 import StorageIcon from "@mui/icons-material/Storage";
 import { useSelector, useDispatch } from "react-redux";
 import { addFile, setThreadFiles } from "../../store/features/chatSlice";
-import { marked } from "marked";
+import showdown from "showdown";
 
-import useKeyboardAwareFocus from "../../hooks/useKeyboardAwareFocus"; // Adjust the import path as needed
-
-const modellist = [
-  { name: "Equall/Saul-Instruct-v1", icon: sualbot },
-  { name: "AdaptLLM/law-chat", icon: bot },
-];
 export const Chat = () => {
   const [messages, setMessages] = useState([
     {
@@ -60,7 +54,6 @@ export const Chat = () => {
     token: 0,
     cost: 0,
   });
-  // const [model, setModl] = useState("");
 
   const [threadId, setThreadId] = useState(null);
   const [isToggled, setIsToggled] = useState(true);
@@ -90,6 +83,12 @@ export const Chat = () => {
   // temporary state
 
   const [open, setOpen] = useState(false);
+
+  const converter = new showdown.Converter({
+    omitExtraWLInCodeBlocks: true,
+    simplifiedAutoLink: true,
+    strikethrough: true,
+  });
 
   const handleFocus = () => {
     console.log("=========");
@@ -514,7 +513,7 @@ export const Chat = () => {
                 {messages.map((message, i) => {
                   const newMsg = {
                     ...message,
-                    message: marked.parse(message.message),
+                    message: converter.makeHtml(message.message),
                   };
                   // Determine if the current message is the last one from the same user in a sequence
                   const showAvatar =

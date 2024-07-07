@@ -124,6 +124,7 @@
   padding-top: 10px;
   padding-bottom: 10px;
   padding-right: 10px;
+  font-weight: 600;
 }
 
 /* @media screen and (max-width: 580px) {
@@ -218,7 +219,7 @@ html {
 .testting p {
   margin-block-start: 0.4rem !important;
   margin-block-end: 0 !important;
-  margin-bottom: -15px !important;
+  margin-bottom: 0 !important;
 }
 
 .testting ol,
