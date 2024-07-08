@@ -15,25 +15,27 @@ export const SingleChatHistory = ({
 
   return (
     <div>
-      <h3
-        className="chatHeading"
-        onClick={() => {
-          handleChatChange(chatData);
-          setTitle(chatData.title);
+      {chatData.title ? (
+        <h3
+          className="chatHeading"
+          onClick={() => {
+            handleChatChange(chatData);
+            setTitle(chatData.title);
 
-          if (setDrawer) {
-            setDrawer(false);
+            if (setDrawer) {
+              setDrawer(false);
+            }
+          }}
+        >
+          {
+            converter
+              .makeHtml(chatData.title)
+              .replace(/<\/?[^>]+(>|$)/g, " ")
+              .replace(/^[\s"]+|[\s"]+$/g, "")
+              .split(":")[0]
           }
-        }}
-      >
-        {
-          converter
-            .makeHtml(chatData.title)
-            .replace(/<\/?[^>]+(>|$)/g, " ")
-            .replace(/^[\s"]+|[\s"]+$/g, "")
-            .split(":")[0]
-        }
-      </h3>
+        </h3>
+      ) : null}
       <Divider />
     </div>
   );
