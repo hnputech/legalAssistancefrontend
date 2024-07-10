@@ -19,6 +19,10 @@
 .cs-message__content {
   border-radius: 0.7rem !important;
 }
+.cs-message__content {
+  white-space: normal !important;
+  padding: 0.6em 1.2em !important;
+}
 
 .model-select {
   padding: 10px !important;
@@ -227,6 +231,18 @@ ul {
   margin-block-start: 0.2em !important;
   margin-block-end: 0.2em !important;
   padding-left: 30px;
+  /* margin-top: 0px;
+  margin-bottom: 0; */
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.testting p {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.testting li {
+  padding-top: 10px;
+  /* padding-bottom: 10px; */
 }
 
 .testting h1,
@@ -237,4 +253,13 @@ h5,
 h6 {
   margin-block-start: 0.2em;
   margin-block-end: 0.2em;
+}
+
+.testting hr {
+  display: block;
+  height: 0.5px;
+  border: 0;
+  border-top: 0.5px solid #000000de;
+  /* margin: 1em 0; */
+  padding: 0;
 }
