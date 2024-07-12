@@ -13,6 +13,12 @@ export const SingleChatHistory = ({
     strikethrough: true,
   });
 
+  const chatTitle = converter
+    .makeHtml(chatData.title)
+    .replace(/<\/?[^>]+(>|$)/g, " ")
+    .replace(/^[\s"]+|[\s"]+$/g, "")
+    .split(":");
+
   return (
     <div>
       {chatData.title ? (
@@ -27,13 +33,9 @@ export const SingleChatHistory = ({
             }
           }}
         >
-          {
-            converter
-              .makeHtml(chatData.title)
-              .replace(/<\/?[^>]+(>|$)/g, " ")
-              .replace(/^[\s"]+|[\s"]+$/g, "")
-              .split(":")[0]
-          }
+          {chatTitle[0].trim().toLowerCase() === "title"
+            ? chatTitle[1]
+            : chatTitle[0]}
         </h3>
       ) : null}
       <Divider />
