@@ -35,11 +35,14 @@ import StorageIcon from "@mui/icons-material/Storage";
 import { useSelector, useDispatch } from "react-redux";
 import { addFile, setThreadFiles } from "../../store/features/chatSlice";
 import showdown from "showdown";
+import { botMessage } from "./const";
+
+let pattern = /【\d+:\d+†source】/g;
 
 export const Chat = () => {
   const [messages, setMessages] = useState([
     {
-      message: "Hello, I'm Law GPT! Ask me anything!",
+      message: botMessage,
       sentTime: "just now",
       sender: "assistant",
     },
@@ -157,7 +160,7 @@ export const Chat = () => {
             ? result
             : [
                 {
-                  message: "Hello, I'm Law GPT! Ask me anything!",
+                  message: botMessage,
                   sentTime: "just now",
                   sender: "assistant",
                 },
@@ -169,7 +172,7 @@ export const Chat = () => {
 
         setMessages([
           {
-            message: "Hello, I'm Law GPT! Ask me anything!",
+            message: botMessage,
             sentTime: "just now",
             sender: "assistant",
           },
@@ -221,7 +224,7 @@ export const Chat = () => {
     });
     setMessages([
       {
-        message: "Hello, I'm Law GPT! Ask me anything!",
+        message: botMessage,
         sentTime: "just now",
         sender: "assistant",
       },
@@ -386,12 +389,17 @@ export const Chat = () => {
     }
   };
 
+  const chatTitle = converter
+    .makeHtml(title)
+    .replace(/<\/?[^>]+(>|$)/g, " ")
+    .replace(/^[\s"]+|[\s"]+$/g, "")
+    .split(":");
+
   return (
     <div style={{ display: "flex", width: "100%" }}>
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={open}
-        // onClick={handleClose}
       >
         <CircularProgress color="inherit" />
       </Backdrop>
@@ -488,7 +496,13 @@ export const Chat = () => {
             </div>
           </div>
           <Divider>
-            {title.length > 20 ? title.substring(0, 20) + "..." : title}
+            {chatTitle[0].trim().toLowerCase() === "title"
+              ? chatTitle[1].length > 20
+                ? chatTitle[1].substring(0, 20) + "..."
+                : chatTitle[1]
+              : chatTitle[0].length > 20
+              ? chatTitle[0].substring(0, 20) + "..."
+              : chatTitle[0]}
           </Divider>
           <div ref={inputRef}>
             <ChatContainer
@@ -513,7 +527,9 @@ export const Chat = () => {
                 {messages.map((message, i) => {
                   const newMsg = {
                     ...message,
-                    message: converter.makeHtml(message.message),
+                    message: converter
+                      .makeHtml(message.message)
+                      .replace(pattern, ""),
                   };
                   // Determine if the current message is the last one from the same user in a sequence
                   const showAvatar =
@@ -522,26 +538,7 @@ export const Chat = () => {
                       messages[i + 1].sender !== message.sender);
 
                   return (
-                    <Message
-                      key={i}
-                      className="testting"
-                      model={newMsg}
-                      // style={{
-                      //   marginLeft:
-                      //     (message.sender === "Equall/Saul-Instruct-v1" ||
-                      //       message.sender === "AdaptLLM/law-chat") &&
-                      //     !showAvatar
-                      //       ? "30px"
-                      //       : "",
-                      //   marginRight:
-                      //     (message.sender === "Equall/Saul-Instruct-v1" ||
-                      //       message.sender === "AdaptLLM/law-chat") &&
-                      //     !showAvatar
-                      //       ? "30px"
-                      //       : "",
-                      //   marginTop: "10px",
-                      // }}
-                    >
+                    <Message key={i} className="testting" model={newMsg}>
                       {showAvatar && (
                         <Avatar
                           size={ismobile ? "sm" : "md"}
@@ -564,8 +561,6 @@ export const Chat = () => {
                 placeholder="Type message here"
                 onSend={handleSend}
                 style={{ paddingTop: "15px" }}
-                // attachButton={false}
-                // onAttachClick={handleAttach}
                 attachButton={true}
                 onAttachClick={handleAttachClick}
                 disabled={isTyping || isUploading}
