@@ -515,7 +515,7 @@ export const Chat = () => {
             >
               <MessageList
                 className="test"
-                scrollBehavior="smooth"
+                scrollBehavior="auto"
                 typingIndicator={
                   isTyping ? (
                     <TypingIndicator content="Assistant is typing" />
