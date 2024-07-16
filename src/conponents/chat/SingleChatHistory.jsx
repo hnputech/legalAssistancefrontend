@@ -14,7 +14,7 @@ export const SingleChatHistory = ({
   });
 
   const chatTitle = converter
-    .makeHtml(chatData.title)
+    .makeHtml(chatData?.title ?? "")
     .replace(/<\/?[^>]+(>|$)/g, " ")
     .replace(/^[\s"]+|[\s"]+$/g, "")
     .split(":");
