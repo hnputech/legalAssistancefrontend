@@ -100,9 +100,10 @@ export const ChatsHistory = ({
             >
               <div>
                 {userData &&
-                  userData.map((item) => {
+                  userData.map((item, index) => {
                     return (
                       <SingleChatHistory
+                        key={index}
                         chatData={item}
                         handleChatChange={handleThreadUpdate}
                         setTitle={setTitle}
@@ -167,9 +168,10 @@ export const ChatsHistory = ({
           >
             <div>
               {userData &&
-                userData.map((item) => {
+                userData.map((item, index) => {
                   return (
                     <SingleChatHistory
+                      key={index}
                       chatData={item}
                       handleChatChange={handleThreadUpdate}
                       setTitle={setTitle}
