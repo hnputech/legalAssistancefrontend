@@ -263,3 +263,20 @@ h6 {
   /* margin: 1em 0; */
   padding: 0;
 }
+
+.template-filter {
+  margin-left: 20px;
+  padding: 10px;
+  border-radius: 30px;
+}
+.template-filter:hover {
+  background: #e6e6e6;
+}
+
+.jodit-workplace + .jodit-status-bar {
+  display: none;
+}
+
+.jodit-editor__resize {
+  display: none;
+}

@@ -5,6 +5,12 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import MenuIcon from "@mui/icons-material/Menu";
 import IconButton from "@mui/material/IconButton";
 import { Button, Divider } from "@mui/material";
+
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
 import { SingleChatHistory } from "./SingleChatHistory";
 import CloseIcon from "@mui/icons-material/Close";
 import { deleteFiles, getThreadAlFiles } from "../../requests/chats";
@@ -141,7 +147,12 @@ export const ChatsHistory = ({
         </SwipeableDrawer>
       </div>
       {!ismobile ? (
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
           <div>
             <h2 className="charHistoryheading">Chat history</h2>
             <Divider />
@@ -166,19 +177,30 @@ export const ChatsHistory = ({
               height: "60vh",
             }}
           >
-            <div>
-              {userData &&
-                userData.map((item, index) => {
-                  return (
-                    <SingleChatHistory
-                      key={index}
-                      chatData={item}
-                      handleChatChange={handleThreadUpdate}
-                      setTitle={setTitle}
-                    />
-                  );
-                })}
-            </div>
+            <Accordion defaultExpanded>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1-content"
+                id="panel1-header"
+              >
+                Chat History
+              </AccordionSummary>
+              <AccordionDetails sx={{ margin: 0, padding: 0 }}>
+                <div>
+                  {userData &&
+                    userData.map((item, index) => {
+                      return (
+                        <SingleChatHistory
+                          key={index}
+                          chatData={item}
+                          handleChatChange={handleThreadUpdate}
+                          setTitle={setTitle}
+                        />
+                      );
+                    })}
+                </div>
+              </AccordionDetails>
+            </Accordion>
           </div>
 
           <div>
