@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 
-const PurchaseForm = () => {
+const Partnership = () => {
   const {
     handleSubmit,
     control,
@@ -46,14 +46,14 @@ const PurchaseForm = () => {
           sx={{ "& > :not(style)": { m: 2, width: "35ch" } }}
         >
           <Controller
-            name="buyer"
+            name="partner1Name"
             control={control}
             defaultValue=""
-            rules={{ required: "Buyer name is required" }}
+            rules={{ required: "Partner1 Name  is required" }}
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Buyer Name"
+                label="Partner 1 Name"
                 variant="outlined"
                 error={!!errors.buyer}
                 helperText={errors.buyer ? errors.buyer.message : ""}
@@ -62,14 +62,14 @@ const PurchaseForm = () => {
           />
 
           <Controller
-            name="buyercontactinfo"
+            name="partner2Name"
             control={control}
             defaultValue=""
-            rules={{ required: "Buyer Contact Info is required" }}
+            rules={{ required: "Partner 2 Name is required" }}
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Buyer Contact Info"
+                label="Partner 2 Name"
                 variant="outlined"
                 error={!!errors.seller}
                 helperText={errors.seller ? errors.seller.message : ""}
@@ -78,14 +78,14 @@ const PurchaseForm = () => {
           />
 
           <Controller
-            name="buyerAddress"
+            name="businessName"
             control={control}
             defaultValue=""
-            rules={{ required: "Buyer address is required" }}
+            rules={{ required: "Business Name is required" }}
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Buyer Address"
+                label="Business Name"
                 variant="outlined"
                 error={!!errors.buyerAddress}
                 helperText={
@@ -95,14 +95,14 @@ const PurchaseForm = () => {
             )}
           />
           <Controller
-            name="seller"
+            name="businessAddress"
             control={control}
             defaultValue=""
-            rules={{ required: "Seller name is required" }}
+            rules={{ required: "Business Address name is required" }}
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Seller Name"
+                label="Business Address"
                 variant="outlined"
                 error={!!errors.seller}
                 helperText={errors.seller ? errors.seller.message : ""}
@@ -111,14 +111,16 @@ const PurchaseForm = () => {
           />
 
           <Controller
-            name="sellerontactinfo"
+            name="partner1CapitalContribution"
             control={control}
             defaultValue=""
-            rules={{ required: "Seller Contact Info is required" }}
+            rules={{
+              required: "Partner 1 Capital Contribution Info is required",
+            }}
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Seller Contact Info"
+                label="Partner 1 Capital Contribution "
                 variant="outlined"
                 error={!!errors.seller}
                 helperText={errors.seller ? errors.seller.message : ""}
@@ -127,14 +129,49 @@ const PurchaseForm = () => {
           />
 
           <Controller
-            name="sellerAddress"
+            name="partner2CapitalContribution"
             control={control}
             defaultValue=""
-            rules={{ required: "Seller address is required" }}
+            rules={{
+              required: "Partner 2 Capital Contribution Info is required",
+            }}
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Seller Address"
+                label="Partner 2 Capital Contribution "
+                variant="outlined"
+                error={!!errors.seller}
+                helperText={errors.seller ? errors.seller.message : ""}
+              />
+            )}
+          />
+
+          <Controller
+            name="partner1OwnershipPercentage"
+            control={control}
+            defaultValue=""
+            rules={{ required: "Partner 1 Ownership Percentage is required" }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Partner 1 Ownership Percentage"
+                variant="outlined"
+                error={!!errors.sellerAddress}
+                helperText={
+                  errors.sellerAddress ? errors.sellerAddress.message : ""
+                }
+              />
+            )}
+          />
+          <Controller
+            name="partner2OwnershipPercentage"
+            control={control}
+            defaultValue=""
+            rules={{ required: "Partner 2 Ownership Percentage is required" }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Partner 2 Ownership Percentage"
                 variant="outlined"
                 error={!!errors.sellerAddress}
                 helperText={
@@ -145,14 +182,16 @@ const PurchaseForm = () => {
           />
 
           <Controller
-            name="goods"
+            name="managementResponsibilitiesOfPartner1"
             control={control}
             defaultValue=""
-            rules={{ required: "Product details are required" }}
+            rules={{
+              required: "Management Responsibilities details are required",
+            }}
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Product details"
+                label="Management Responsibilities Of Partner 1"
                 variant="outlined"
                 error={!!errors.goods}
                 helperText={errors.goods ? errors.goods.message : ""}
@@ -161,11 +200,29 @@ const PurchaseForm = () => {
           />
 
           <Controller
-            name="price"
+            name="managementResponsibilitiesOfPartner2"
             control={control}
             defaultValue=""
             rules={{
-              required: "Product Price is required",
+              required: "Management Responsibilities details are required",
+            }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Management Responsibilities Of Partner 2"
+                variant="outlined"
+                error={!!errors.goods}
+                helperText={errors.goods ? errors.goods.message : ""}
+              />
+            )}
+          />
+
+          <Controller
+            name="durationOfPartnership"
+            control={control}
+            defaultValue=""
+            rules={{
+              required: "Duration Of Partnership Price is required",
               pattern: {
                 value: /^\d+(\.\d{1,2})?$/,
                 message: "Invalid price format",
@@ -174,7 +231,7 @@ const PurchaseForm = () => {
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Product Price"
+                label="Duration Of Partnership"
                 variant="outlined"
                 error={!!errors.price}
                 helperText={errors.price ? errors.price.message : ""}
@@ -183,14 +240,14 @@ const PurchaseForm = () => {
           />
 
           <Controller
-            name="dateOfPurchase"
+            name="dateOfPartnerShip"
             control={control}
             defaultValue=""
-            rules={{ required: "Date of purchase is required" }}
+            rules={{ required: "Date of Partnership is required" }}
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Date of Purchase"
+                label="Date of Partnership"
                 variant="outlined"
                 type="date"
                 InputLabelProps={{ shrink: true }}
@@ -198,55 +255,6 @@ const PurchaseForm = () => {
                 helperText={
                   errors.dateOfPurchase ? errors.dateOfPurchase.message : ""
                 }
-              />
-            )}
-          />
-
-          <Controller
-            name="placeOfDelivery"
-            control={control}
-            defaultValue=""
-            rules={{ required: "Place of delivery is required" }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Place of Delivery"
-                variant="outlined"
-                error={!!errors.placeOfDelivery}
-                helperText={
-                  errors.placeOfDelivery ? errors.placeOfDelivery.message : ""
-                }
-              />
-            )}
-          />
-
-          <Controller
-            name="warranty"
-            control={control}
-            defaultValue=""
-            rules={{ required: "Warranty is required" }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Warranty"
-                variant="outlined"
-                error={!!errors.warranty}
-                helperText={errors.warranty ? errors.warranty.message : ""}
-              />
-            )}
-          />
-          <Controller
-            name="quantity"
-            control={control}
-            defaultValue=""
-            rules={{ required: "Quantity is required" }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Quantity"
-                variant="outlined"
-                error={!!errors.warranty}
-                helperText={errors.warranty ? errors.warranty.message : ""}
               />
             )}
           />

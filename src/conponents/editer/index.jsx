@@ -1,93 +1,31 @@
-// import React, { useState, useRef, useEffect } from "react";
-// import JoditEditor from "jodit-react";
-// import showdown from "showdown";
-// import { axioxInstance } from "../../requests/apiInstance";
-
-// const config = {
-//   height: "80vh",
-//   width: "60vw",
-//   removeButtons: ["image", "video", "file", "speechRecognize", "about"],
-// };
-// export const TemplateEditor = () => {
-//   const editor = useRef(null);
-//   const [content, setContent] = useState("");
-//   console.log("======content", content);
-//   const converter = new showdown.Converter({
-//     omitExtraWLInCodeBlocks: true,
-//     simplifiedAutoLink: true,
-//     strikethrough: true,
-//   });
-
-//   //   useEffect(() => {
-//   const fetchatdata = async () => {
-//     // getting response from server based on the user prompt
-//     const response = await fetch("http://localhost:3001/templateGenerator", {
-//       method: "post",
-//       headers: {
-//         Accept: "application/json, text/plain, */*",
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({ userPrompt: "what you can do ?" }),
-//     });
-//     if (!response.ok || !response.body) {
-//       throw response.statusText;
-//     }
-
-//     // Here we start prepping for the streaming response
-//     const reader = response.body.getReader();
-//     const decoder = new TextDecoder();
-//     const loopRunner = true;
-
-//     while (loopRunner) {
-//       // Here we start reading the stream, until its done.
-//       const { value, done } = await reader.read();
-//       if (done) {
-//         break;
-//       }
-//       const decodedChunk = decoder.decode(value, { stream: true });
-//       //   setContent(decodedChunk); //
-//       setContent((answer) => answer + decodedChunk);
-//     }
-//   };
-
-//   //   }, []);
-
-//   return (
-//     <>
-//       <button onClick={() => fetchatdata()}>click me</button>
-//       <JoditEditor
-//         ref={editor}
-//         value={converter.makeHtml(content)}
-//         config={config}
-//         //   tabIndex={1} // tabIndex of textarea
-//         onBlur={(newContent) => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
-//         //   onChange={(newContent) => setContent(newContent)}
-//       />
-//     </>
-//   );
-// };
-
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import JoditEditor from "jodit-react";
 import showdown from "showdown";
 
 import jsPDF from "jspdf";
 import { saveAs } from "file-saver";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import ArticleSharpIcon from "@mui/icons-material/ArticleSharp";
+import ContentCopySharpIcon from "@mui/icons-material/ContentCopySharp";
+import { Grid, IconButton, TextField } from "@mui/material";
 
 const config = {
   height: "80vh",
-  width: "60vw",
+  // width: "60vw",
+  width: "100%",
   removeButtons: ["image", "video", "file", "speechRecognize", "about"],
 };
 
+const converter = new showdown.Converter({
+  omitExtraWLInCodeBlocks: true,
+  simplifiedAutoLink: true,
+  strikethrough: true,
+});
 export const TemplateEditor = () => {
   const editor = useRef(null);
   const [content, setContent] = useState("");
-  const converter = new showdown.Converter({
-    omitExtraWLInCodeBlocks: true,
-    simplifiedAutoLink: true,
-    strikethrough: true,
-  });
+
+  const [documentName, setDocumentName] = useState("New document");
 
   const fetchChatData = async () => {
     try {
@@ -135,7 +73,7 @@ export const TemplateEditor = () => {
 
     pdf.html(input, {
       callback: function(pdf) {
-        pdf.save("myfile.pdf");
+        pdf.save(`${documentName || "New document"}.pdf`);
       },
       x: 10,
       y: 15,
@@ -151,7 +89,7 @@ export const TemplateEditor = () => {
     const input = document.getElementsByClassName("jodit-wysiwyg")[0].innerHTML;
 
     const blob = new Blob([input], { type: "application/msword" });
-    saveAs(blob, "content.doc");
+    saveAs(blob, `${documentName || "New document"}.doc`);
   };
 
   const handleCopyClipboard = () => {
@@ -164,32 +102,82 @@ export const TemplateEditor = () => {
   //  testing end
 
   return (
-    <>
-      <button onClick={() => fetchChatData()}>fetch data</button>
-
-      <button onClick={() => handleDownloadDoc()}>doc </button>
-      <button
-        onClick={printDocument}
-        // onClick={() => {
-        //   const idwala = document.getElementById("mim");
-        //   console.log(idwala);
-        //   const collection = document.getElementsByClassName("jodit-wysiwyg");
-        //   console.log("collection", collection[0]);
+    <Grid
+      container
+      style={{
+        width: "100%",
+        backgroundColor: "white",
+      }}
+    >
+      <Grid
+        item
+        xs={12}
+        md={6}
+        // style={{
+        //   display: "flex",
+        //   justifyContent: "space-between",
+        //   alignItems: "center",
         // }}
       >
-        Click me
-      </button>
-      <button onClick={() => handleCopyClipboard()}>copy </button>
+        <TextField
+          sx={{
+            // marginLeft: "10px",
+            marginTop: "10px",
+            width: "100%",
+            maxWidth: "400px",
+          }}
+          value={documentName}
+          label="Document Name"
+          variant="outlined"
+          onChange={(e) => {
+            setDocumentName(e.target.value);
+          }}
+        />
+      </Grid>
+      <Grid
+        item
+        xs={12}
+        md={6}
+        style={{
+          display: "flex",
+          justifyContent: "end",
+          padding: "20px",
+          gap: "15px",
+        }}
+      >
+        <button onClick={() => fetchChatData()}>fetch data</button>
 
-      <div id="mim">
-        <div>inner</div>
-      </div>
+        <IconButton
+          title="Export as Word Document"
+          sx={{ "&:hover": { color: "blue" } }}
+          onClick={() => handleDownloadDoc()}
+        >
+          <ArticleSharpIcon />
+        </IconButton>
+
+        <IconButton
+          title="Export as Word PDF"
+          sx={{ "&:hover": { color: "red" } }}
+          onClick={printDocument}
+        >
+          <PictureAsPdfIcon />
+        </IconButton>
+
+        <IconButton
+          title="Copy Text"
+          sx={{ "&:hover": { color: "orange" } }}
+          onClick={() => handleCopyClipboard()}
+        >
+          <ContentCopySharpIcon />
+        </IconButton>
+      </Grid>
+
       <JoditEditor
         ref={editor}
         value={converter.makeHtml(content)}
         config={config}
         onBlur={(newContent) => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
       />
-    </>
+    </Grid>
   );
 };

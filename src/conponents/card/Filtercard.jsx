@@ -22,29 +22,33 @@ export const FilterCard = ({
   return (
     <Card
       sx={{
-        width: "80%",
+        width: "100%",
         borderRadius: "5px",
       }}
     >
       <CardContent>
-        <div
-          style={{
-            display: "flex ",
-          }}
-        >
-          <img src={icon} width={30} height={30} />
-          <Typography
-            variant="h6"
-            sx={{ marginTop: "5px", fontWeight: "bold" }}
-            gutterBottom
+        <div style={{ marginLeft: "10x" }}>
+          {" "}
+          <div
+            style={{
+              display: "flex ",
+            }}
           >
-            {title}
-          </Typography>
+            <img src={icon} width={30} height={30} />
+            <Typography
+              variant="h6"
+              sx={{ marginTop: "5px", fontWeight: "bold" }}
+              gutterBottom
+            >
+              {title}
+            </Typography>
+          </div>
+          <Typography variant="body2">{description}</Typography>
         </div>
 
-        <Typography variant="body2">{description}</Typography>
         <TextField
           fullWidth
+          sx={{ marginTop: "10px" }}
           id="fullWidth"
           placeholder="Search template"
           value={search}

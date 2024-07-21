@@ -117,8 +117,8 @@
 @media screen and (max-width: 580px) {
   .charHistoryheading {
     font-size: medium;
-    padding-top: 25px;
-    padding-bottom: 25px;
+    /* padding-top: 25px;
+    padding-bottom: 25px; */
   }
 }
 

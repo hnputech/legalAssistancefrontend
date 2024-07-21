@@ -6,7 +6,15 @@ export const CardContainer = ({ title, description, data }) => {
   return (
     <div>
       <Typography variant="h4">{title}</Typography>
-      <Typography variant="body2">{description}.</Typography>
+      <Typography
+        variant="body2"
+        sx={{
+          marginTop: "10px",
+          marginBottom: "10px",
+        }}
+      >
+        {description}.
+      </Typography>
 
       <div
         style={{
@@ -22,6 +30,7 @@ export const CardContainer = ({ title, description, data }) => {
               icon={item.icon}
               title={item.title}
               description={item.description}
+              id={item.id}
               type={item.type}
             />
           );

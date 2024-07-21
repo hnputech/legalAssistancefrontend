@@ -1,0 +1,21 @@
+.template-filter-container {
+  margin-top: 10px;
+  background-color: #f5f9fc;
+  border-radius: 50vh;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  height: 60px;
+  overflow-x: auto;
+}
+
+.template-filter {
+  margin-left: 20px;
+  white-space: nowrap;
+  cursor: pointer;
+  padding: 10px;
+}
+
+.template-filter.active {
+  background-color: #f1f1f1;
+}

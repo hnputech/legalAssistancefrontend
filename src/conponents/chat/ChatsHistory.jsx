@@ -16,6 +16,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import { deleteFiles, getThreadAlFiles } from "../../requests/chats";
 import { useSelector, useDispatch } from "react-redux";
 import { setThreadFiles } from "../../store/features/chatSlice";
+import AddIcon from "@mui/icons-material/Add";
+import PostAddIcon from "@mui/icons-material/PostAdd";
+import { useNavigate } from "react-router-dom";
 
 export const ChatsHistory = ({
   userData,
@@ -28,6 +31,8 @@ export const ChatsHistory = ({
   const [drawer, setDrawer] = useState(false);
 
   const ismobile = useIsMobile();
+
+  const navigate = useNavigate();
 
   const handleThreadUpdate = (threadId) => {
     handleChatChange(threadId);
@@ -76,11 +81,34 @@ export const ChatsHistory = ({
             <div
               style={{
                 // overflowY: "auto",
-                height: "15vh",
+                height: "20vh",
                 // width: "20rem",
               }}
             >
-              <h2 className="charHistoryheading">Chat history</h2>
+              <Button
+                sx={{
+                  "&:focus": {
+                    outline: "none",
+                    boxShadow: "none",
+                  },
+                  borderRight: "none",
+                  borderLeft: "none",
+                  borderRadius: "0",
+                }}
+                color="secondary"
+                onClick={() => navigate("template")}
+                variant="outlined"
+                style={{
+                  textAlign: "center",
+                  width: "100%",
+                  padding: "10px",
+                  marginTop: "10px",
+                  marginBottom: "10px",
+                }}
+              >
+                Generate documents <PostAddIcon />
+              </Button>
+
               <Divider />
               <Button
                 sx={{
@@ -93,8 +121,13 @@ export const ChatsHistory = ({
                 variant="text"
                 style={{ textAlign: "center", width: "100%", padding: "10px" }}
               >
-                Create new chat
+                Create new chat <AddIcon />
               </Button>
+              <Divider />
+
+              <Divider />
+
+              <h2 className="charHistoryheading">Chat history</h2>
               <Divider />
             </div>
             <div

@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 
-const PurchaseForm = () => {
+const Patent = () => {
   const {
     handleSubmit,
     control,
@@ -46,207 +46,213 @@ const PurchaseForm = () => {
           sx={{ "& > :not(style)": { m: 2, width: "35ch" } }}
         >
           <Controller
-            name="buyer"
+            name="applicantName"
             control={control}
             defaultValue=""
-            rules={{ required: "Buyer name is required" }}
+            rules={{ required: "Applicant Name is required" }}
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Buyer Name"
+                label="Applicant Name"
                 variant="outlined"
-                error={!!errors.buyer}
-                helperText={errors.buyer ? errors.buyer.message : ""}
-              />
-            )}
-          />
-
-          <Controller
-            name="buyercontactinfo"
-            control={control}
-            defaultValue=""
-            rules={{ required: "Buyer Contact Info is required" }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Buyer Contact Info"
-                variant="outlined"
-                error={!!errors.seller}
-                helperText={errors.seller ? errors.seller.message : ""}
-              />
-            )}
-          />
-
-          <Controller
-            name="buyerAddress"
-            control={control}
-            defaultValue=""
-            rules={{ required: "Buyer address is required" }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Buyer Address"
-                variant="outlined"
-                error={!!errors.buyerAddress}
+                error={!!errors.applicantName}
                 helperText={
-                  errors.buyerAddress ? errors.buyerAddress.message : ""
-                }
-              />
-            )}
-          />
-          <Controller
-            name="seller"
-            control={control}
-            defaultValue=""
-            rules={{ required: "Seller name is required" }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Seller Name"
-                variant="outlined"
-                error={!!errors.seller}
-                helperText={errors.seller ? errors.seller.message : ""}
-              />
-            )}
-          />
-
-          <Controller
-            name="sellerontactinfo"
-            control={control}
-            defaultValue=""
-            rules={{ required: "Seller Contact Info is required" }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Seller Contact Info"
-                variant="outlined"
-                error={!!errors.seller}
-                helperText={errors.seller ? errors.seller.message : ""}
-              />
-            )}
-          />
-
-          <Controller
-            name="sellerAddress"
-            control={control}
-            defaultValue=""
-            rules={{ required: "Seller address is required" }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Seller Address"
-                variant="outlined"
-                error={!!errors.sellerAddress}
-                helperText={
-                  errors.sellerAddress ? errors.sellerAddress.message : ""
+                  errors.applicantName ? errors.applicantName.message : ""
                 }
               />
             )}
           />
 
           <Controller
-            name="goods"
+            name="applicantAddress"
             control={control}
             defaultValue=""
-            rules={{ required: "Product details are required" }}
+            rules={{ required: "Applicant Address is required" }}
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Product details"
+                label="Applicant Address"
                 variant="outlined"
-                error={!!errors.goods}
-                helperText={errors.goods ? errors.goods.message : ""}
-              />
-            )}
-          />
-
-          <Controller
-            name="price"
-            control={control}
-            defaultValue=""
-            rules={{
-              required: "Product Price is required",
-              pattern: {
-                value: /^\d+(\.\d{1,2})?$/,
-                message: "Invalid price format",
-              },
-            }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Product Price"
-                variant="outlined"
-                error={!!errors.price}
-                helperText={errors.price ? errors.price.message : ""}
-              />
-            )}
-          />
-
-          <Controller
-            name="dateOfPurchase"
-            control={control}
-            defaultValue=""
-            rules={{ required: "Date of purchase is required" }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Date of Purchase"
-                variant="outlined"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                error={!!errors.dateOfPurchase}
+                error={!!errors.applicantAddress}
                 helperText={
-                  errors.dateOfPurchase ? errors.dateOfPurchase.message : ""
+                  errors.applicantAddress ? errors.applicantAddress.message : ""
                 }
               />
             )}
           />
 
           <Controller
-            name="placeOfDelivery"
+            name="inventionTitle"
             control={control}
             defaultValue=""
-            rules={{ required: "Place of delivery is required" }}
+            rules={{ required: "Invention Title is required" }}
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Place of Delivery"
+                label="Invention Title"
                 variant="outlined"
-                error={!!errors.placeOfDelivery}
+                error={!!errors.inventionTitle}
                 helperText={
-                  errors.placeOfDelivery ? errors.placeOfDelivery.message : ""
+                  errors.inventionTitle ? errors.inventionTitle.message : ""
                 }
               />
             )}
           />
 
           <Controller
-            name="warranty"
+            name="inventorNames"
             control={control}
             defaultValue=""
-            rules={{ required: "Warranty is required" }}
+            rules={{ required: "Inventor Names are required" }}
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Warranty"
+                label="Inventor Names"
                 variant="outlined"
-                error={!!errors.warranty}
-                helperText={errors.warranty ? errors.warranty.message : ""}
+                error={!!errors.inventorNames}
+                helperText={
+                  errors.inventorNames ? errors.inventorNames.message : ""
+                }
               />
             )}
           />
+
           <Controller
-            name="quantity"
+            name="inventionDescription"
             control={control}
             defaultValue=""
-            rules={{ required: "Quantity is required" }}
+            rules={{ required: "Invention Description is required" }}
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Quantity"
+                label="Invention Description"
                 variant="outlined"
-                error={!!errors.warranty}
-                helperText={errors.warranty ? errors.warranty.message : ""}
+                error={!!errors.inventionDescription}
+                helperText={
+                  errors.inventionDescription
+                    ? errors.inventionDescription.message
+                    : ""
+                }
+                multiline
+                rows={4}
+              />
+            )}
+          />
+
+          <Controller
+            name="fieldOfInvention"
+            control={control}
+            defaultValue=""
+            rules={{ required: "Field of Invention is required" }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Field of Invention"
+                variant="outlined"
+                error={!!errors.fieldOfInvention}
+                helperText={
+                  errors.fieldOfInvention ? errors.fieldOfInvention.message : ""
+                }
+              />
+            )}
+          />
+
+          <Controller
+            name="backgroundOfInvention"
+            control={control}
+            defaultValue=""
+            rules={{ required: "Background of Invention is required" }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Background of Invention"
+                variant="outlined"
+                error={!!errors.backgroundOfInvention}
+                helperText={
+                  errors.backgroundOfInvention
+                    ? errors.backgroundOfInvention.message
+                    : ""
+                }
+                multiline
+                rows={4}
+              />
+            )}
+          />
+
+          <Controller
+            name="summaryOfInvention"
+            control={control}
+            defaultValue=""
+            rules={{ required: "Summary of Invention is required" }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Summary of Invention"
+                variant="outlined"
+                error={!!errors.summaryOfInvention}
+                helperText={
+                  errors.summaryOfInvention
+                    ? errors.summaryOfInvention.message
+                    : ""
+                }
+                multiline
+                rows={4}
+              />
+            )}
+          />
+
+          <Controller
+            name="detailedDescription"
+            control={control}
+            defaultValue=""
+            rules={{ required: "Detailed Description is required" }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Detailed Description"
+                variant="outlined"
+                error={!!errors.detailedDescription}
+                helperText={
+                  errors.detailedDescription
+                    ? errors.detailedDescription.message
+                    : ""
+                }
+                multiline
+                rows={4}
+              />
+            )}
+          />
+
+          <Controller
+            name="claims"
+            control={control}
+            defaultValue=""
+            rules={{ required: "Claims are required" }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Claims"
+                variant="outlined"
+                error={!!errors.claims}
+                helperText={errors.claims ? errors.claims.message : ""}
+                multiline
+                rows={4}
+              />
+            )}
+          />
+
+          <Controller
+            name="filingDate"
+            control={control}
+            defaultValue=""
+            rules={{ required: "Filing Date is required" }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Filing Date"
+                variant="outlined"
+                error={!!errors.filingDate}
+                helperText={errors.filingDate ? errors.filingDate.message : ""}
               />
             )}
           />
@@ -260,4 +266,4 @@ const PurchaseForm = () => {
   );
 };
 
-export default PurchaseForm;
+export default Patent;
