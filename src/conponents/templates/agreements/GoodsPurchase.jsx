@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { searchdaata } from "../Template";
+import { searchdaata } from "../const";
 
 export const PurchaseForm = ({ setContent }) => {
   let { templateId } = useParams();
@@ -25,9 +25,6 @@ export const PurchaseForm = ({ setContent }) => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    console.log(data);
-    console.log(data, "and", templateId);
-
     try {
       const response = await fetch(
         `http://localhost:3001/templateGenerator/${templateId}`,

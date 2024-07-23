@@ -1,6 +1,6 @@
 import React from "react";
-import { cardData } from "./Template";
 import "./filter.css";
+import { cardData } from "./const";
 
 export const TemplateFilter = ({ filter, handleUpdateFilter }) => {
   return (

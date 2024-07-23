@@ -11,7 +11,7 @@ import {
 import {} from "react-router-dom";
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { searchdaata } from "../Template";
+import { searchdaata } from "../const";
 
 export const NDA = ({ setContent }) => {
   let { templateId } = useParams();

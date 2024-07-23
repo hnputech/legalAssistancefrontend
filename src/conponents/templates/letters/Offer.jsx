@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { searchdaata } from "../Template";
 
 export const OfferLetter = ({ setContent }) => {
   let { templateId } = useParams();

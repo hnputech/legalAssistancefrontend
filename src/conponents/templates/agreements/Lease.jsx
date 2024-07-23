@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { searchdaata } from "../Template";
+import { searchdaata } from "../const";
 
 export const LeaseAgreement = ({ setContent }) => {
   let { templateId } = useParams();

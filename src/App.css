@@ -280,3 +280,13 @@ h6 {
 .jodit-editor__resize {
   display: none;
 }
+
+.pdf-content {
+  width: calc(595.28pt - 40px); /* Ensure it accounts for padding */
+  max-width: none;
+  padding: 20px;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}

@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import leaseimg from "../../assets/lease.png";
 import TextField from "@mui/material/TextField";
+import { useNavigate } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
+import legal from "../../assets/legal.png";
 import { TemplateFilter } from "../templates/TemplateFilter";
 
 export const FilterCard = ({
-  icon = leaseimg,
+  icon = legal,
   title = "Title",
   description = "description",
   filter,
@@ -15,7 +18,7 @@ export const FilterCard = ({
   search,
   handleUpdateSearch,
 }) => {
-  console.log("======search", search);
+  const navigate = useNavigate();
   const handleChange = (e) => {
     handleUpdateSearch(e.target.value);
   };
@@ -27,8 +30,15 @@ export const FilterCard = ({
       }}
     >
       <CardContent>
-        <div style={{ marginLeft: "10x" }}>
-          {" "}
+        <div style={{ marginLeft: "10px" }}>
+          <ArrowBackIcon
+            onClick={() => {
+              navigate("/");
+            }}
+            style={{
+              marginBottom: "10px",
+            }}
+          />
           <div
             style={{
               display: "flex ",
