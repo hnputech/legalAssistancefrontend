@@ -8,37 +8,68 @@ import {
   CardContent,
   Typography,
 } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { searchdaata } from "../Template";
 
-const Demand = () => {
+export const Demand = ({ setContent }) => {
+  let { templateId } = useParams();
+  const navigate = useNavigate();
+
+  const cardInfo = searchdaata.find((item) => item.id === templateId);
+
   const {
     handleSubmit,
     control,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
-  };
-
-  return (
-    <Card
-      sx={
+  const onSubmit = async (data) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3001/templateGenerator/${templateId}`,
         {
-          // width: "40%",
-          // maxWidth: "400px",
+          method: "POST",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ data: data }),
         }
+      );
+
+      if (!response.ok || !response.body) {
+        throw new Error(response.statusText);
       }
-    >
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        const decodedChunk = decoder.decode(value, { stream: true });
+
+        setContent((prevContent) => prevContent + decodedChunk);
+      }
+    } catch (error) {
+      console.error("Failed to fetch data", error);
+    }
+  };
+  return (
+    <Card>
       <CardContent>
+        <ArrowBackIcon onClick={() => navigate("/template")} />
+
         <Typography
           variant="h6"
           sx={{ marginTop: "5px", fontWeight: "bold" }}
           gutterBottom
         >
-          {"title"}
+          {cardInfo.title}
         </Typography>
 
-        <Typography variant="body2">{"description"}.</Typography>
+        <Typography variant="body2">{cardInfo.description}.</Typography>
 
         <Box
           component="form"
@@ -46,10 +77,79 @@ const Demand = () => {
           sx={{ "& > :not(style)": { m: 2, width: "35ch" } }}
         >
           <Controller
+            name="recipientName"
+            control={control}
+            defaultValue=""
+            rules={{ required: "  Recipient Name is required" }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Enter the Recipient Name"
+                variant="outlined"
+                error={!!errors.recipientName}
+                helperText={
+                  errors.recipientName ? errors.recipientName.message : ""
+                }
+              />
+            )}
+          />
+          , ,
+          <Controller
+            name="senderName"
+            control={control}
+            defaultValue=""
+            rules={{ required: " the Sender Name is required" }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Enter the Sender Name"
+                variant="outlined"
+                error={!!errors.senderName}
+                helperText={errors.senderName ? errors.senderName.message : ""}
+              />
+            )}
+          />
+          <Controller
+            name="sanderAddress"
+            control={control}
+            defaultValue=""
+            rules={{ required: " Sander Address is required" }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Enter the Sender Address"
+                variant="outlined"
+                error={!!errors.sanderAddress}
+                helperText={
+                  errors.sanderAddress ? errors.sanderAddress.message : ""
+                }
+              />
+            )}
+          />
+          <Controller
+            name="senderContactInfo"
+            control={control}
+            defaultValue=""
+            rules={{ required: " the sender ContactInfo is required" }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Enter the sender ContactInfo"
+                variant="outlined"
+                error={!!errors.senderContactInfo}
+                helperText={
+                  errors.senderContactInfo
+                    ? errors.senderContactInfo.message
+                    : ""
+                }
+              />
+            )}
+          />
+          <Controller
             name="topicOfDispute"
             control={control}
             defaultValue=""
-            rules={{ required: "Enter the topic of dispute is required" }}
+            rules={{ required: " the topic of dispute is required" }}
             render={({ field }) => (
               <TextField
                 {...field}
@@ -64,7 +164,6 @@ const Demand = () => {
               />
             )}
           />
-
           <Controller
             name="whatDoYouWantOtherPartyToDo"
             control={control}
@@ -88,7 +187,6 @@ const Demand = () => {
               />
             )}
           />
-
           <Controller
             name="factsOfDispute"
             control={control}
@@ -110,7 +208,6 @@ const Demand = () => {
               />
             )}
           />
-
           <Controller
             name="legalBasisOfDemand"
             control={control}
@@ -134,7 +231,6 @@ const Demand = () => {
               />
             )}
           />
-
           <Controller
             name="actionToResolve"
             control={control}
@@ -157,7 +253,6 @@ const Demand = () => {
               />
             )}
           />
-
           <Controller
             name="damageSuffered"
             control={control}
@@ -177,7 +272,6 @@ const Demand = () => {
               />
             )}
           />
-
           <Button type="submit" variant="contained">
             Submit
           </Button>
@@ -186,5 +280,3 @@ const Demand = () => {
     </Card>
   );
 };
-
-export default Demand;

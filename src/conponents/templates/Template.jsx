@@ -163,13 +163,6 @@ export const cardData = {
         type: "agreement",
         id: "loanagreement",
       },
-      {
-        icon: leaseimg,
-        title: "Investment Agreement",
-        description: "description",
-        type: "agreement",
-        id: "investmentagreement",
-      },
     ],
   },
   letter: {
@@ -183,20 +176,7 @@ export const cardData = {
         type: "letter",
         id: "offerletter",
       },
-      // {
-      //   icon: leaseimg,
-      //   title: "Termination Letter",
-      //   description: "Employee Termination Letter",
-      //   type: "letter",
-      //   id: "terminationletter",
-      // },
-      // {
-      //   icon: leaseimg,
-      //   title: "Warning Letter",
-      //   description: "Employee Warning Letter",
-      //   type: "letter",
-      //   id: "warningletter",
-      // },
+
       {
         icon: leaseimg,
         title: "Demand Letter",
@@ -229,72 +209,83 @@ export const cardData = {
   },
 };
 
-const searchdaata = [
+export const searchdaata = [
   {
     icon: leaseimg,
     title: "Partnership Agreement",
     description: "Agreement of Partnership between 2 parties",
     type: "agreement",
+    id: "partnershipagreement",
   },
   {
     icon: leaseimg,
     title: "Non-Disclosure Agreement (NDA)",
-    description: "create  NDA",
+    description: "create NDA",
     type: "agreement",
+    id: "nondisclosureagreementnda",
   },
   {
     icon: leaseimg,
     title: "Employment Contract",
     description: "An agreement of employment",
     type: "agreement",
+    id: "employmentcontract",
   },
   {
     icon: leaseimg,
     title: "Lease Agreement",
     description: "description",
     type: "agreement",
+    id: "leaseagreement",
   },
   {
     icon: leaseimg,
     title: "Purchase and Sell Agreement",
     description: "A simple agreement to Purchase or sell goods",
     type: "agreement",
+    id: "purchaseandsellagreement",
   },
   {
     icon: leaseimg,
     title: "Rental Agreement",
     description: "description",
     type: "agreement",
+    id: "rentalagreement",
   },
   {
     icon: leaseimg,
     title: "Loan Agreement",
     description: "A loan document",
     type: "agreement",
+    id: "loanagreement",
   },
   {
     icon: leaseimg,
     title: "Investment Agreement",
     description: "description",
     type: "agreement",
+    id: "investmentagreement",
   },
   {
     icon: leaseimg,
     title: "Offer Letter",
-    description: "Offer letter for employment ",
+    description: "Offer letter for employment",
     type: "letter",
+    id: "offerletter",
   },
   {
     icon: leaseimg,
     title: "Termination Letter",
     description: "Employee Termination Letter",
     type: "letter",
+    id: "terminationletter",
   },
   {
     icon: leaseimg,
     title: "Warning Letter",
     description: "Employee Warning Letter",
     type: "letter",
+    id: "warningletter",
   },
   {
     icon: leaseimg,
@@ -302,18 +293,21 @@ const searchdaata = [
     description:
       "Ask the AI to draft a demand letter to formally request payment or resolution of a dispute.",
     type: "letter",
+    id: "demandletter",
   },
   {
     icon: leaseimg,
     title: "Patent Application",
-    description: "Application for registering Patent ",
-    type: "Application",
+    description: "Application for registering Patent",
+    type: "application",
+    id: "patentapplication",
   },
   {
     icon: leaseimg,
     title: "Trademark Application",
-    description: "application for registering Trademark ",
-    type: "Application",
+    description: "Application for registering Trademark",
+    type: "application",
+    id: "trademarkapplication",
   },
 ];
 

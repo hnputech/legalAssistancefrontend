@@ -40,7 +40,7 @@ export const BasicCard = ({
       })}
     >
       {/* <CardActionArea> */}
-      <Link to={`/template/lll`} underline="none">
+      <Link to={`/template/${id}`} underline="none">
         <CardContent style={{ color: "rgba(0, 0, 0, 0.87)" }}>
           <img src={icon} width={30} height={30} />
           <Typography

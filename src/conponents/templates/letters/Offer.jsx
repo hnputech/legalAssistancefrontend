@@ -8,37 +8,69 @@ import {
   CardContent,
   Typography,
 } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { searchdaata } from "../Template";
 
-const OfferLetter = () => {
+export const OfferLetter = ({ setContent }) => {
+  let { templateId } = useParams();
+
+  const navigate = useNavigate();
+
+  const cardInfo = searchdaata.find((item) => item.id === templateId);
+
   const {
     handleSubmit,
     control,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
-  };
-
-  return (
-    <Card
-      sx={
+  const onSubmit = async (data) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3001/templateGenerator/${templateId}`,
         {
-          // width: "40%",
-          // maxWidth: "400px",
+          method: "POST",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ data: data }),
         }
+      );
+
+      if (!response.ok || !response.body) {
+        throw new Error(response.statusText);
       }
-    >
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        const decodedChunk = decoder.decode(value, { stream: true });
+
+        setContent((prevContent) => prevContent + decodedChunk);
+      }
+    } catch (error) {
+      console.error("Failed to fetch data", error);
+    }
+  };
+  return (
+    <Card>
       <CardContent>
+        <ArrowBackIcon onClick={() => navigate("/template")} />
+
         <Typography
           variant="h6"
           sx={{ marginTop: "5px", fontWeight: "bold" }}
           gutterBottom
         >
-          {"title"}
+          {cardInfo.title}
         </Typography>
 
-        <Typography variant="body2">{"description"}.</Typography>
+        <Typography variant="body2">{cardInfo.description}.</Typography>
 
         <Box
           component="form"
@@ -227,5 +259,3 @@ const OfferLetter = () => {
     </Card>
   );
 };
-
-export default OfferLetter;

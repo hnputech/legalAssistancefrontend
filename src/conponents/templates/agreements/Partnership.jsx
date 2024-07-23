@@ -8,37 +8,69 @@ import {
   CardContent,
   Typography,
 } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { searchdaata } from "../Template";
 
-const Partnership = () => {
+export const Partnership = ({ setContent }) => {
+  let { templateId } = useParams();
+  const navigate = useNavigate();
+
+  const cardInfo = searchdaata.find((item) => item.id === templateId);
+
   const {
     handleSubmit,
     control,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3001/templateGenerator/${templateId}`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ data: data }),
+        }
+      );
+
+      if (!response.ok || !response.body) {
+        throw new Error(response.statusText);
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        const decodedChunk = decoder.decode(value, { stream: true });
+
+        setContent((prevContent) => prevContent + decodedChunk);
+      }
+    } catch (error) {
+      console.error("Failed to fetch data", error);
+    }
   };
 
   return (
-    <Card
-      sx={
-        {
-          // width: "40%",
-          // maxWidth: "400px",
-        }
-      }
-    >
+    <Card>
       <CardContent>
+        <ArrowBackIcon onClick={() => navigate("/template")} />
+
         <Typography
           variant="h6"
           sx={{ marginTop: "5px", fontWeight: "bold" }}
           gutterBottom
         >
-          {"title"}
+          {cardInfo.title}
         </Typography>
 
-        <Typography variant="body2">{"description"}.</Typography>
+        <Typography variant="body2">{cardInfo.description}.</Typography>
 
         <Box
           component="form"
@@ -55,8 +87,10 @@ const Partnership = () => {
                 {...field}
                 label="Partner 1 Name"
                 variant="outlined"
-                error={!!errors.buyer}
-                helperText={errors.buyer ? errors.buyer.message : ""}
+                error={!!errors.partner1Name}
+                helperText={
+                  errors.partner1Name ? errors.partner1Name.message : ""
+                }
               />
             )}
           />
@@ -71,8 +105,10 @@ const Partnership = () => {
                 {...field}
                 label="Partner 2 Name"
                 variant="outlined"
-                error={!!errors.seller}
-                helperText={errors.seller ? errors.seller.message : ""}
+                error={!!errors.partner2Name}
+                helperText={
+                  errors.partner2Name ? errors.partner2Name.message : ""
+                }
               />
             )}
           />
@@ -87,9 +123,9 @@ const Partnership = () => {
                 {...field}
                 label="Business Name"
                 variant="outlined"
-                error={!!errors.buyerAddress}
+                error={!!errors.businessName}
                 helperText={
-                  errors.buyerAddress ? errors.buyerAddress.message : ""
+                  errors.businessName ? errors.businessName.message : ""
                 }
               />
             )}
@@ -104,8 +140,10 @@ const Partnership = () => {
                 {...field}
                 label="Business Address"
                 variant="outlined"
-                error={!!errors.seller}
-                helperText={errors.seller ? errors.seller.message : ""}
+                error={!!errors.businessAddress}
+                helperText={
+                  errors.businessAddress ? errors.businessAddress.message : ""
+                }
               />
             )}
           />
@@ -122,8 +160,12 @@ const Partnership = () => {
                 {...field}
                 label="Partner 1 Capital Contribution "
                 variant="outlined"
-                error={!!errors.seller}
-                helperText={errors.seller ? errors.seller.message : ""}
+                error={!!errors.partner1CapitalContribution}
+                helperText={
+                  errors.partner1CapitalContribution
+                    ? errors.partner1CapitalContribution.message
+                    : ""
+                }
               />
             )}
           />
@@ -140,8 +182,12 @@ const Partnership = () => {
                 {...field}
                 label="Partner 2 Capital Contribution "
                 variant="outlined"
-                error={!!errors.seller}
-                helperText={errors.seller ? errors.seller.message : ""}
+                error={!!errors.partner2CapitalContribution}
+                helperText={
+                  errors.partner2CapitalContribution
+                    ? errors.partner2CapitalContribution.message
+                    : ""
+                }
               />
             )}
           />
@@ -156,9 +202,11 @@ const Partnership = () => {
                 {...field}
                 label="Partner 1 Ownership Percentage"
                 variant="outlined"
-                error={!!errors.sellerAddress}
+                error={!!errors.partner1OwnershipPercentage}
                 helperText={
-                  errors.sellerAddress ? errors.sellerAddress.message : ""
+                  errors.partner1OwnershipPercentage
+                    ? errors.partner1OwnershipPercentage.message
+                    : ""
                 }
               />
             )}
@@ -173,9 +221,11 @@ const Partnership = () => {
                 {...field}
                 label="Partner 2 Ownership Percentage"
                 variant="outlined"
-                error={!!errors.sellerAddress}
+                error={!!errors.partner2OwnershipPercentage}
                 helperText={
-                  errors.sellerAddress ? errors.sellerAddress.message : ""
+                  errors.partner2OwnershipPercentage
+                    ? errors.partner2OwnershipPercentage.message
+                    : ""
                 }
               />
             )}
@@ -193,8 +243,12 @@ const Partnership = () => {
                 {...field}
                 label="Management Responsibilities Of Partner 1"
                 variant="outlined"
-                error={!!errors.goods}
-                helperText={errors.goods ? errors.goods.message : ""}
+                error={!!errors.managementResponsibilitiesOfPartner1}
+                helperText={
+                  errors.managementResponsibilitiesOfPartner1
+                    ? errors.managementResponsibilitiesOfPartner1.message
+                    : ""
+                }
               />
             )}
           />
@@ -211,8 +265,12 @@ const Partnership = () => {
                 {...field}
                 label="Management Responsibilities Of Partner 2"
                 variant="outlined"
-                error={!!errors.goods}
-                helperText={errors.goods ? errors.goods.message : ""}
+                error={!!errors.managementResponsibilitiesOfPartner2}
+                helperText={
+                  errors.managementResponsibilitiesOfPartner2
+                    ? errors.managementResponsibilitiesOfPartner2.message
+                    : ""
+                }
               />
             )}
           />
@@ -222,10 +280,10 @@ const Partnership = () => {
             control={control}
             defaultValue=""
             rules={{
-              required: "Duration Of Partnership Price is required",
+              required: "Duration Of Partnership Price is required (in years)",
               pattern: {
                 value: /^\d+(\.\d{1,2})?$/,
-                message: "Invalid price format",
+                message: "Invalid years format",
               },
             }}
             render={({ field }) => (
@@ -233,8 +291,12 @@ const Partnership = () => {
                 {...field}
                 label="Duration Of Partnership"
                 variant="outlined"
-                error={!!errors.price}
-                helperText={errors.price ? errors.price.message : ""}
+                error={!!errors.durationOfPartnership}
+                helperText={
+                  errors.durationOfPartnership
+                    ? errors.durationOfPartnership.message
+                    : ""
+                }
               />
             )}
           />
@@ -251,9 +313,11 @@ const Partnership = () => {
                 variant="outlined"
                 type="date"
                 InputLabelProps={{ shrink: true }}
-                error={!!errors.dateOfPurchase}
+                error={!!errors.dateOfPartnerShip}
                 helperText={
-                  errors.dateOfPurchase ? errors.dateOfPurchase.message : ""
+                  errors.dateOfPartnerShip
+                    ? errors.dateOfPartnerShip.message
+                    : ""
                 }
               />
             )}
@@ -267,5 +331,3 @@ const Partnership = () => {
     </Card>
   );
 };
-
-export default PurchaseForm;

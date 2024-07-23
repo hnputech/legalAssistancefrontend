@@ -8,10 +8,10 @@ import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import ArticleSharpIcon from "@mui/icons-material/ArticleSharp";
 import ContentCopySharpIcon from "@mui/icons-material/ContentCopySharp";
 import { Grid, IconButton, TextField } from "@mui/material";
+// import { useSelector } from "react-redux";
 
 const config = {
   height: "80vh",
-  // width: "60vw",
   width: "100%",
   removeButtons: ["image", "video", "file", "speechRecognize", "about"],
 };
@@ -21,9 +21,8 @@ const converter = new showdown.Converter({
   simplifiedAutoLink: true,
   strikethrough: true,
 });
-export const TemplateEditor = () => {
+export const TemplateEditor = ({ content, setContent }) => {
   const editor = useRef(null);
-  const [content, setContent] = useState("");
 
   const [documentName, setDocumentName] = useState("New document");
 
@@ -109,16 +108,7 @@ export const TemplateEditor = () => {
         backgroundColor: "white",
       }}
     >
-      <Grid
-        item
-        xs={12}
-        md={6}
-        // style={{
-        //   display: "flex",
-        //   justifyContent: "space-between",
-        //   alignItems: "center",
-        // }}
-      >
+      <Grid item xs={12} md={6}>
         <TextField
           sx={{
             // marginLeft: "10px",
