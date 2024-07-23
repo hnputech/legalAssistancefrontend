@@ -4,10 +4,12 @@ import { BasicCard } from "../card";
 import { CardContainer } from "../card/CardContainer";
 import { FilterCard } from "../card/Filtercard";
 import { cardData, searchdaata } from "./const";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 export const Template = () => {
   const [filter, setFilter] = useState("");
   const [search, setSearch] = useState("");
+  const isMobile = useIsMobile();
 
   const handleUpdateFilter = (updatedFilter) => {
     setSearch("");
@@ -24,7 +26,7 @@ export const Template = () => {
       style={{
         display: "flex",
         flexDirection: "column",
-        height: "100vh",
+        height: isMobile ? "100vh" : "calc(100vh - 64px)",
       }}
     >
       <FilterCard

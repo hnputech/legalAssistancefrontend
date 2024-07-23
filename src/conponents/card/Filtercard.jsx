@@ -8,6 +8,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import legal from "../../assets/legal.png";
 import { TemplateFilter } from "../templates/TemplateFilter";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 export const FilterCard = ({
   icon = legal,
@@ -19,9 +20,12 @@ export const FilterCard = ({
   handleUpdateSearch,
 }) => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
+
   const handleChange = (e) => {
     handleUpdateSearch(e.target.value);
   };
+
   return (
     <Card
       sx={{
@@ -31,14 +35,16 @@ export const FilterCard = ({
     >
       <CardContent>
         <div style={{ marginLeft: "10px" }}>
-          <ArrowBackIcon
-            onClick={() => {
-              navigate("/");
-            }}
-            style={{
-              marginBottom: "10px",
-            }}
-          />
+          {isMobile ? (
+            <ArrowBackIcon
+              onClick={() => {
+                navigate("/");
+              }}
+              style={{
+                marginBottom: "10px",
+              }}
+            />
+          ) : null}
           <div
             style={{
               display: "flex ",

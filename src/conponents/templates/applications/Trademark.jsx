@@ -11,9 +11,11 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { searchdaata } from "../const";
+import { useIsMobile } from "../../../hooks/useIsMobile";
 export const Trademark = ({ setContent }) => {
   let { templateId } = useParams();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const cardInfo = searchdaata.find((item) => item.id === templateId);
 
@@ -59,8 +61,9 @@ export const Trademark = ({ setContent }) => {
   return (
     <Card>
       <CardContent>
-        <ArrowBackIcon onClick={() => navigate("/template")} />
-
+        {isMobile ? (
+          <ArrowBackIcon onClick={() => navigate("/template")} />
+        ) : null}
         <Typography
           variant="h6"
           sx={{ marginTop: "5px", fontWeight: "bold" }}

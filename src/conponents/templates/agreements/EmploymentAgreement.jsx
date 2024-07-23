@@ -11,10 +11,12 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { searchdaata } from "../const";
+import { useIsMobile } from "../../../hooks/useIsMobile";
 
 export const EmploymentAgreement = ({ setContent }) => {
   const { templateId } = useParams();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const cardInfo = searchdaata.find((item) => item.id === templateId);
 
@@ -25,9 +27,6 @@ export const EmploymentAgreement = ({ setContent }) => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    console.log(data);
-    console.log(data, "and", templateId);
-
     try {
       const response = await fetch(
         `http://localhost:3001/templateGenerator/${templateId}`,
@@ -62,8 +61,9 @@ export const EmploymentAgreement = ({ setContent }) => {
   return (
     <Card>
       <CardContent>
-        <ArrowBackIcon onClick={() => navigate("/template")} />
-
+        {isMobile ? (
+          <ArrowBackIcon onClick={() => navigate("/template")} />
+        ) : null}
         <Typography
           variant="h6"
           sx={{ marginTop: "5px", fontWeight: "bold" }}

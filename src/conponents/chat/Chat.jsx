@@ -419,7 +419,9 @@ export const Chat = () => {
         className="container"
         sx={{
           maxWidth: "2000px",
-          height: "100vh",
+          // height: "100vh",
+          height: ismobile ? "100vh" : "calc(100vh - 64px)",
+
           width: ismobile ? "100%" : "70%",
         }}
       >
@@ -510,7 +512,9 @@ export const Chat = () => {
                 paddingTop: "10px",
                 paddingBottom: "10px",
 
-                height: "85vh",
+                height: ismobile ? "85vh" : "calc(85vh - 40px)",
+
+                // height: "85vh",
               }}
             >
               <MessageList

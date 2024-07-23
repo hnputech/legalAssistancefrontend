@@ -14,6 +14,7 @@ import { useIsMobile } from "../../hooks/useIsMobile";
 const config = {
   height: "80vh",
   width: "55vw",
+
   // width: "100%",
 
   removeButtons: ["image", "video", "file", "speechRecognize", "about"],
@@ -209,7 +210,7 @@ export const TemplateEditor = ({ content, setContent }) => {
           gap: "15px",
         }}
       >
-        <button onClick={() => fetchChatData()}>fetch data</button>
+        {/* <button onClick={() => fetchChatData()}>fetch data</button> */}
 
         <IconButton
           title="Export as Word Document"

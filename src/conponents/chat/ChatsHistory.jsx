@@ -184,6 +184,7 @@ export const ChatsHistory = ({
           style={{
             display: "flex",
             flexDirection: "column",
+            height: ismobile ? "100vh" : "calc(100vh - 64px)",
           }}
         >
           <div>
@@ -210,7 +211,7 @@ export const ChatsHistory = ({
               height: "60vh",
             }}
           >
-            <Accordion defaultExpanded>
+            {/* <Accordion defaultExpanded>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1-content"
@@ -233,7 +234,7 @@ export const ChatsHistory = ({
                     })}
                 </div>
               </AccordionDetails>
-            </Accordion>
+            </Accordion> */}
           </div>
 
           <div>
@@ -242,18 +243,6 @@ export const ChatsHistory = ({
             <Divider />
           </div>
           <div style={{ height: "30vh", overflowY: "auto" }}>
-            {/* <Button
-              onClick={() => {
-                handleUploadFile();
-                setDrawer(false);
-              }}
-              variant="text"
-              style={{ textAlign: "center", width: "100%", padding: "10px" }}
-            >
-              Upload{" "}
-            </Button>
-            <Divider /> */}
-
             <div>
               {threadId && threadId ? (
                 <ThreadFiles threadId={threadId.threadid} />

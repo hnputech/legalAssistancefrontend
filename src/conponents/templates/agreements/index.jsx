@@ -13,6 +13,7 @@ import { Trademark } from "../applications/Trademark";
 import { Demand } from "../letters/Demand";
 import { OfferLetter } from "../letters/Offer";
 import { useParams, useNavigate } from "react-router-dom";
+import { useIsMobile } from "../../../hooks/useIsMobile";
 
 const templatFormObj = {
   partnershipagreement: Partnership,
@@ -31,21 +32,23 @@ const templatFormObj = {
 const SellPurchase = () => {
   let { templateId } = useParams();
   const [content, setContent] = useState("");
+  const isMobile = useIsMobile();
 
   return (
     <Grid
       sx={{
         overflow: "auto",
-        height: "100vh",
+        // height: "100vh",
+        height: isMobile ? "100vh" : "calc(100vh - 64px)",
       }}
       container
     >
-      <Grid item xs={12} md={5}>
+      <Grid item xs={12} md={3}>
         {React.createElement(templatFormObj[templateId], {
           setContent: setContent,
         })}
       </Grid>
-      <Grid item xs={12} md={7} style={{ padding: "20px" }}>
+      <Grid item xs={12} md={8} style={{ padding: "20px" }}>
         <TemplateEditor content={content} setContent={setContent} />
       </Grid>
     </Grid>

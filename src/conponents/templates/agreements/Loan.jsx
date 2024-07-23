@@ -11,10 +11,12 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { searchdaata } from "../const";
+import { useIsMobile } from "../../../hooks/useIsMobile";
 
 export const LoanAgreement = ({ setContent }) => {
   let { templateId } = useParams();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const cardInfo = searchdaata.find((item) => item.id === templateId);
 
@@ -25,10 +27,6 @@ export const LoanAgreement = ({ setContent }) => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    console.log(data);
-    console.log(data, "and", templateId);
-    // const res = await generateTemplate(templateId, data);
-
     try {
       const response = await fetch(
         `http://localhost:3001/templateGenerator/${templateId}`,
@@ -53,11 +51,8 @@ export const LoanAgreement = ({ setContent }) => {
         const { value, done } = await reader.read();
         if (done) break;
         const decodedChunk = decoder.decode(value, { stream: true });
-        // let updatedData = templateData + decodedChunk || "";
-        // console.log("=====updatedData", updatedData);
-        // dispatch(updateTemplateState(updatedData));
+
         setContent((prevContent) => prevContent + decodedChunk);
-        // setContent((prevContent) => prevContent + decodedChunk);
       }
     } catch (error) {
       console.error("Failed to fetch data", error);
@@ -67,8 +62,9 @@ export const LoanAgreement = ({ setContent }) => {
   return (
     <Card>
       <CardContent>
-        <ArrowBackIcon onClick={() => navigate("/template")} />
-
+        {isMobile ? (
+          <ArrowBackIcon onClick={() => navigate("/template")} />
+        ) : null}
         <Typography
           variant="h6"
           sx={{ marginTop: "5px", fontWeight: "bold" }}

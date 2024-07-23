@@ -13,8 +13,11 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
-import { useIsMobile } from "./src/hooks/useIsMobile";
 import { Outlet } from "react-router-dom";
+import chatIcon from "../../assets/chat.png";
+import documentsIcon from "../../assets/draft-.png";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import { useNavigate } from "react-router-dom/dist";
 
 const drawerWidth = 240;
 
@@ -22,14 +25,20 @@ const sideBarData = [
   {
     title: "Chats",
     link: "/",
-    icon: "",
+    icon: chatIcon,
+  },
+  {
+    title: "Draft Documents",
+    link: "/template",
+    icon: documentsIcon,
   },
 ];
 
-export default function ClippedDrawer() {
+export const SideBarLayout = () => {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: isMobile ? "block" : "flex" }}>
       {!isMobile ? (
         <>
           {" "}
@@ -58,24 +67,22 @@ export default function ClippedDrawer() {
             <Toolbar />
             <Box sx={{ overflow: "auto" }}>
               <List>
-                {["Inbox", "Starred", "Send email", "Drafts"].map(
-                  (text, index) => (
-                    <ListItem key={text} disablePadding>
-                      <ListItemButton>
-                        <ListItemIcon>
-                          {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                        </ListItemIcon>
-                        <ListItemText primary={text} />
-                      </ListItemButton>
-                    </ListItem>
-                  )
-                )}
+                {sideBarData.map((item, index) => (
+                  <ListItem key={item.title} disablePadding>
+                    <ListItemButton onClick={() => navigate(item.link)}>
+                      <ListItemIcon>
+                        <img src={item.icon} width={30} height={30} />
+                      </ListItemIcon>
+                      <ListItemText primary={item.title} />
+                    </ListItemButton>
+                  </ListItem>
+                ))}
               </List>
               <Divider />
               <List>
                 {["All mail", "Trash", "Spam"].map((text, index) => (
                   <ListItem key={text} disablePadding>
-                    <ListItemButton>
+                    <ListItemButton onClick={() => navigate(item.link)}>
                       <ListItemIcon>
                         {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                       </ListItemIcon>
@@ -88,7 +95,13 @@ export default function ClippedDrawer() {
           </Drawer>
         </>
       ) : null}
-      <Outlet />
+      {/* <div style={{ marginTop: "px" }}> */}
+      <div style={{ width: "100%" }}>
+        {!isMobile ? <Toolbar /> : null}
+
+        <Outlet />
+      </div>
+      {/* </div> */}
       {/* <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Typography paragraph>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
@@ -122,4 +135,4 @@ export default function ClippedDrawer() {
       </Box> */}
     </Box>
   );
-}
+};
