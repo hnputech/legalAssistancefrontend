@@ -40,14 +40,17 @@ export const TemplateEditor = ({ content, setContent }) => {
 
   const fetchChatData = async () => {
     try {
-      const response = await fetch("http://localhost:3001/templateGenerator", {
-        method: "POST",
-        headers: {
-          Accept: "application/json, text/plain, */*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userPrompt: "what you can do ?" }),
-      });
+      const response = await fetch(
+        "https://legalbackend-aondtyyl6a-uc.a.run.app/templateGenerator",
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userPrompt: "what you can do ?" }),
+        }
+      );
 
       if (!response.ok || !response.body) {
         throw new Error(response.statusText);
@@ -151,7 +154,7 @@ export const TemplateEditor = ({ content, setContent }) => {
       x: 10,
       y: 15,
       html2canvas: {
-        scale: 1, // Adjust the scale to better fit the content
+        scale: 0.8, // Adjust the scale to better fit the content
         useCORS: true, // Handle CORS issues if there are any external images
         logging: true, // Enable logging for debugging
         width: container.offsetWidth,

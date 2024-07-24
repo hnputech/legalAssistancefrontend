@@ -1,0 +1,45 @@
+/* MultiToggle.css */
+.toggle-button-group {
+  display: flex;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  /* margin-top: 10px;
+  margin-left: 15px; */
+  /* max-width: 350px; */
+}
+
+.toggle-button {
+  /* flex: 1; */
+  padding: 10px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  border: none;
+  background-color: white;
+  color: #333;
+  border-radius: 0;
+  height: 40px;
+  width: auto;
+}
+
+.toggle-button:focus {
+  outline: none;
+}
+
+.toggle-button:not(:last-child) {
+  border-right: 1px solid #ccc;
+  flex-grow: 1;
+}
+
+.toggle-button:hover {
+  background-color: #f0f0f0;
+}
+
+.toggle-button.active {
+  background-color: rgba(22, 116, 211, 0.08);
+  color: #1976d2;
+}

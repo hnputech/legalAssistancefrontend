@@ -12,9 +12,11 @@ import {
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 
-import bot from "../../assets/bot.svg";
+import got40 from "../../assets/bot.svg";
 import user from "../../assets/user.svg";
-import sualbot from "../../assets/saulbot.svg";
+import gpt40mini from "../../assets/saulbot.svg";
+import gpt3 from "../../assets/bot3.svg";
+
 import pdf from "../../assets/pdf.svg";
 
 import {
@@ -36,8 +38,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { addFile, setThreadFiles } from "../../store/features/chatSlice";
 import showdown from "showdown";
 import { botMessage } from "./const";
+import MultiToggle from "../multiToggle/MutiToggle";
 
 let pattern = /【\d+:\d+†source】/g;
+
+const modelsList = [
+  { value: "gpt440", label: "4o" },
+  { value: "gpt4omini", label: "4o mini" },
+  { value: "gpt35turbo", label: "3.5 turbo" },
+];
 
 export const Chat = () => {
   const [messages, setMessages] = useState([
@@ -59,9 +68,11 @@ export const Chat = () => {
   });
 
   const [threadId, setThreadId] = useState(null);
-  const [isToggled, setIsToggled] = useState(true);
+  // const [isToggled, setIsToggled] = useState(true);
 
   const [title, setTitle] = useState("");
+  const [active, setActive] = useState("gpt440");
+
   const filesArray = useSelector((state) => state.file);
   const dispatch = useDispatch();
 
@@ -71,7 +82,7 @@ export const Chat = () => {
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  const model = isToggled ? "gpt440" : "gpt35turbo";
+  // const model = isToggled ? "gpt440" : "gpt35turbo";
   let userId = urlParams.get("user");
 
   // scroll the mobile down
@@ -80,7 +91,7 @@ export const Chat = () => {
   //  scroll end
 
   if (!userId) {
-    userId = model;
+    userId = active;
   }
 
   // temporary state
@@ -124,6 +135,11 @@ export const Chat = () => {
     }
   };
 
+  const handleActiveStateChange = (state) => {
+    setActive(state);
+    hasRunRef.current = false;
+    handleNewChat();
+  };
   useEffect(() => {
     const fetchData = async () => {
       setOpen(true);
@@ -144,7 +160,7 @@ export const Chat = () => {
       hasRunRef.current = true;
       fetchData();
     }
-  }, [isToggled]);
+  }, [active]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -205,7 +221,7 @@ export const Chat = () => {
     // How it responds, how it talks, etc.
     setIsTyping(true);
     // ====
-    await processMessageToChatGPT(message, newMessages, model);
+    await processMessageToChatGPT(message, newMessages, active);
     // ====
   };
 
@@ -279,11 +295,11 @@ export const Chat = () => {
         ]);
         const costCalculator =
           calculateCost(
-            (model = "gpt35turbo" ? 0.5 : 5),
+            model === "gpt35turbo" ? 0.5 : model === "gpt440" ? 5 : 0.15,
             response.tokkens.promptTokens
           ) +
           calculateCost(
-            (model = "gpt35turbo" ? 1.5 : 15),
+            model === "gpt35turbo" ? 1.5 : model === "gpt440" ? 15 : 0.6,
             response.tokkens.completionTokens
           );
         setTokenCost({
@@ -356,7 +372,8 @@ export const Chat = () => {
     try {
       const response = await axios.post(
         // "http://localhost:3001/upload",
-        "https://legalbackedn2-aondtyyl6a-uc.a.run.app/upload",
+        // "https://legalbackedn2-aondtyyl6a-uc.a.run.app/upload",
+        "https://legalbackend-aondtyyl6a-uc.a.run.app/upload",
 
         formData,
         {
@@ -447,15 +464,11 @@ export const Chat = () => {
             ) : null}
             <div className="toggle-container">
               <div style={{ marginRight: "20px", fontWeight: "bold" }}>
-                {isToggled ? "GPT 4o" : "GPT -3.5"}
-              </div>
-
-              <div
-                className={`toggle-button ${isToggled ? "active" : ""}`}
-                onClick={toggleButton}
-              >
-                {" "}
-                <div className="toggle-circle"></div>
+                <MultiToggle
+                  active={active}
+                  setActive={handleActiveStateChange}
+                  toggleOptions={modelsList}
+                />
               </div>
             </div>
           </div>
@@ -548,10 +561,15 @@ export const Chat = () => {
                           size={ismobile ? "sm" : "md"}
                           name={message.sender}
                           src={
-                            message.sender === "assistant" && isToggled
-                              ? bot
-                              : message.sender === "assistant" && !isToggled
-                              ? sualbot
+                            message.sender === "assistant" &&
+                            active === "gpt440"
+                              ? got40
+                              : message.sender === "assistant" &&
+                                active === "gpt4omini"
+                              ? gpt40mini
+                              : message.sender === "assistant" &&
+                                active === "gpt35turbo"
+                              ? gpt3
                               : user
                           }
                         />

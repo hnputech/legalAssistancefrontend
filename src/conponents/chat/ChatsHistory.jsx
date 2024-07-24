@@ -211,6 +211,19 @@ export const ChatsHistory = ({
               height: "60vh",
             }}
           >
+            <div>
+              {userData &&
+                userData.map((item, index) => {
+                  return (
+                    <SingleChatHistory
+                      key={index}
+                      chatData={item}
+                      handleChatChange={handleThreadUpdate}
+                      setTitle={setTitle}
+                    />
+                  );
+                })}
+            </div>
             {/* <Accordion defaultExpanded>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}

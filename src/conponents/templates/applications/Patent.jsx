@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   TextField,
@@ -12,8 +12,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { searchdaata } from "../const";
 import { useIsMobile } from "../../../hooks/useIsMobile";
+import MultiToggle from "../../multiToggle/MutiToggle";
 
 export const Patent = ({ setContent }) => {
+  const [active, setActive] = useState("gpt-4o");
+
   let { templateId } = useParams();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -29,7 +32,7 @@ export const Patent = ({ setContent }) => {
   const onSubmit = async (data) => {
     try {
       const response = await fetch(
-        `http://localhost:3001/templateGenerator/${templateId}`,
+        `https://legalbackend-aondtyyl6a-uc.a.run.app/templateGenerator/${templateId}`,
         {
           method: "POST",
           headers: {
@@ -74,7 +77,9 @@ export const Patent = ({ setContent }) => {
         </Typography>
 
         <Typography variant="body2">{cardInfo.description}.</Typography>
-
+        <Box sx={{ "& > :not(style)": { m: 2, width: "35ch" } }}>
+          <MultiToggle active={active} setActive={setActive} />
+        </Box>
         <Box
           component="form"
           onSubmit={handleSubmit(onSubmit)}
