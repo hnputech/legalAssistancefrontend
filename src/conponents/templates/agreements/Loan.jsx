@@ -16,6 +16,7 @@ import MultiToggle from "../../multiToggle/MutiToggle";
 
 export const LoanAgreement = ({ setContent }) => {
   const [active, setActive] = useState("gpt-4o");
+  const [isLoading, setIsLoading] = useState(false);
 
   let { templateId } = useParams();
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ export const LoanAgreement = ({ setContent }) => {
   } = useForm();
 
   const onSubmit = async (data) => {
+    setIsLoading(true);
     try {
       const response = await fetch(
         `https://legalbackend-aondtyyl6a-uc.a.run.app/templateGenerator/${templateId}`,
@@ -47,6 +49,7 @@ export const LoanAgreement = ({ setContent }) => {
         throw new Error(response.statusText);
       }
 
+      setIsLoading(false);
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
 
@@ -54,7 +57,6 @@ export const LoanAgreement = ({ setContent }) => {
         const { value, done } = await reader.read();
         if (done) break;
         const decodedChunk = decoder.decode(value, { stream: true });
-
         setContent((prevContent) => prevContent + decodedChunk);
       }
     } catch (error) {
@@ -193,6 +195,8 @@ export const LoanAgreement = ({ setContent }) => {
                 {...field}
                 label="Loan Given Date"
                 variant="outlined"
+                type="date"
+                InputLabelProps={{ shrink: true }}
                 error={!!errors.loanGivenDate}
                 helperText={
                   errors.loanGivenDate ? errors.loanGivenDate.message : ""
@@ -211,6 +215,8 @@ export const LoanAgreement = ({ setContent }) => {
                 {...field}
                 label="Loan Returning Date"
                 variant="outlined"
+                type="date"
+                InputLabelProps={{ shrink: true }}
                 error={!!errors.loanReturningDate}
                 helperText={
                   errors.loanReturningDate
@@ -241,8 +247,15 @@ export const LoanAgreement = ({ setContent }) => {
             )}
           />
 
-          <Button type="submit" variant="contained">
-            Submit
+          <Button
+            type="submit"
+            disabled={isLoading}
+            variant="contained"
+            sx={{
+              width: "90% !important",
+            }}
+          >
+            {isLoading ? "Loading..." : "Submit"}
           </Button>
         </Box>
       </CardContent>

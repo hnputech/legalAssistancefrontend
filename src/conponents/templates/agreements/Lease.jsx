@@ -16,6 +16,7 @@ import MultiToggle from "../../multiToggle/MutiToggle";
 
 export const LeaseAgreement = ({ setContent }) => {
   const [active, setActive] = useState("gpt-4o");
+  const [isLoading, setIsLoading] = useState(false);
 
   let { templateId } = useParams();
   const navigate = useNavigate();
@@ -30,10 +31,7 @@ export const LeaseAgreement = ({ setContent }) => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    console.log(data);
-    console.log(data, "and", templateId);
-    // const res = await generateTemplate(templateId, data);
-
+    setIsLoading(true);
     try {
       const response = await fetch(
         `https://legalbackend-aondtyyl6a-uc.a.run.app/templateGenerator/${templateId}`,
@@ -51,6 +49,7 @@ export const LeaseAgreement = ({ setContent }) => {
         throw new Error(response.statusText);
       }
 
+      setIsLoading(false);
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
 
@@ -58,11 +57,7 @@ export const LeaseAgreement = ({ setContent }) => {
         const { value, done } = await reader.read();
         if (done) break;
         const decodedChunk = decoder.decode(value, { stream: true });
-        // let updatedData = templateData + decodedChunk || "";
-        // console.log("=====updatedData", updatedData);
-        // dispatch(updateTemplateState(updatedData));
         setContent((prevContent) => prevContent + decodedChunk);
-        // setContent((prevContent) => prevContent + decodedChunk);
       }
     } catch (error) {
       console.error("Failed to fetch data", error);
@@ -224,6 +219,8 @@ export const LeaseAgreement = ({ setContent }) => {
                 {...field}
                 label="Date Start"
                 variant="outlined"
+                type="date"
+                InputLabelProps={{ shrink: true }}
                 error={!!errors.dateStart}
                 helperText={errors.dateStart ? errors.dateStart.message : ""}
               />
@@ -240,6 +237,8 @@ export const LeaseAgreement = ({ setContent }) => {
                 {...field}
                 label="Date End"
                 variant="outlined"
+                type="date"
+                InputLabelProps={{ shrink: true }}
                 error={!!errors.dateEnd}
                 helperText={errors.dateEnd ? errors.dateEnd.message : ""}
               />
@@ -256,6 +255,8 @@ export const LeaseAgreement = ({ setContent }) => {
                 {...field}
                 label="Date Late Payment Penalties"
                 variant="outlined"
+                type="date"
+                InputLabelProps={{ shrink: true }}
                 error={!!errors.dateLatePaymentPenalties}
                 helperText={
                   errors.dateLatePaymentPenalties
@@ -266,8 +267,15 @@ export const LeaseAgreement = ({ setContent }) => {
             )}
           />
 
-          <Button type="submit" variant="contained">
-            Submit
+          <Button
+            type="submit"
+            disabled={isLoading}
+            variant="contained"
+            sx={{
+              width: "90% !important",
+            }}
+          >
+            {isLoading ? "Loading..." : "Submit"}
           </Button>
         </Box>
       </CardContent>

@@ -17,6 +17,7 @@ import MultiToggle from "../../multiToggle/MutiToggle";
 
 export const NDA = ({ setContent }) => {
   const [active, setActive] = useState("gpt-4o");
+  const [isLoading, setIsLoading] = useState(false);
 
   let { templateId } = useParams();
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ export const NDA = ({ setContent }) => {
   } = useForm();
 
   const onSubmit = async (data) => {
+    setIsLoading(true);
     try {
       const response = await fetch(
         `https://legalbackend-aondtyyl6a-uc.a.run.app/templateGenerator/${templateId}`,
@@ -48,6 +50,7 @@ export const NDA = ({ setContent }) => {
         throw new Error(response.statusText);
       }
 
+      setIsLoading(false);
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
 
@@ -55,7 +58,6 @@ export const NDA = ({ setContent }) => {
         const { value, done } = await reader.read();
         if (done) break;
         const decodedChunk = decoder.decode(value, { stream: true });
-
         setContent((prevContent) => prevContent + decodedChunk);
       }
     } catch (error) {
@@ -151,8 +153,15 @@ export const NDA = ({ setContent }) => {
             )}
           />
 
-          <Button type="submit" variant="contained">
-            Submit
+          <Button
+            type="submit"
+            disabled={isLoading}
+            variant="contained"
+            sx={{
+              width: "90% !important",
+            }}
+          >
+            {isLoading ? "Loading..." : "Submit"}
           </Button>
         </Box>
       </CardContent>

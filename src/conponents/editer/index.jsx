@@ -14,17 +14,39 @@ import { useIsMobile } from "../../hooks/useIsMobile";
 const config = {
   height: "80vh",
   width: "55vw",
+  askBeforePasteHTML: false,
+  askBeforePasteFromWord: false,
 
   // width: "100%",
+  // buttons:
+  //   "bold,italic,underline,strikethrough,ul,ol,font,fontsize,paragraph,lineHeight,superscript,subscript,spellcheck,cut,copy,paste,selectall,hr,table",
 
-  removeButtons: ["image", "video", "file", "speechRecognize", "about"],
+  removeButtons: [
+    "image",
+    "video",
+    "file",
+    "speechRecognize",
+    "about",
+    "source",
+  ],
 };
 const config1 = {
   height: "80vh",
   width: "90vw",
+  askBeforePasteHTML: false,
+  askBeforePasteFromWord: false,
   // width: "100%",
+  // buttons:
+  //   "bold,italic,underline,strikethrough,ul,ol,font,fontsize,paragraph,lineHeight,superscript,subscript,spellcheck,cut,copy,paste,selectall,hr,table",
 
-  removeButtons: ["image", "video", "file", "speechRecognize", "about"],
+  removeButtons: [
+    "image",
+    "video",
+    "file",
+    "speechRecognize",
+    "about",
+    "source",
+  ],
 };
 
 const converter = new showdown.Converter({
@@ -244,6 +266,7 @@ export const TemplateEditor = ({ content, setContent }) => {
         ref={editor}
         value={converter.makeHtml(content)}
         config={ismobile ? config1 : config}
+        key={content}
         onBlur={(newContent) => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
       />
     </Grid>

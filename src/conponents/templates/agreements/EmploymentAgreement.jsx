@@ -16,6 +16,7 @@ import MultiToggle from "../../multiToggle/MutiToggle";
 
 export const EmploymentAgreement = ({ setContent }) => {
   const [active, setActive] = useState("gpt-4o");
+  const [isLoading, setIsLoading] = useState(false);
 
   const { templateId } = useParams();
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ export const EmploymentAgreement = ({ setContent }) => {
   } = useForm();
 
   const onSubmit = async (data) => {
+    setIsLoading(true);
     try {
       const response = await fetch(
         `https://legalbackend-aondtyyl6a-uc.a.run.app/templateGenerator/${templateId}`,
@@ -47,6 +49,7 @@ export const EmploymentAgreement = ({ setContent }) => {
         throw new Error(response.statusText);
       }
 
+      setIsLoading(false);
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
 
@@ -233,6 +236,8 @@ export const EmploymentAgreement = ({ setContent }) => {
                 {...field}
                 label="What is the joining date?"
                 variant="outlined"
+                type="date"
+                InputLabelProps={{ shrink: true }}
                 error={!!errors.position}
                 helperText={errors.position ? errors.position.message : ""}
               />
@@ -241,12 +246,13 @@ export const EmploymentAgreement = ({ setContent }) => {
 
           <Button
             type="submit"
+            disabled={isLoading}
             variant="contained"
             sx={{
               width: "90% !important",
             }}
           >
-            Submit
+            {isLoading ? "Loading..." : "Submit"}
           </Button>
         </Box>
       </CardContent>

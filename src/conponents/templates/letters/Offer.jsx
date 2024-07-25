@@ -16,6 +16,7 @@ import MultiToggle from "../../multiToggle/MutiToggle";
 
 export const OfferLetter = ({ setContent }) => {
   const [active, setActive] = useState("gpt-4o");
+  const [isLoading, setIsLoading] = useState(false);
 
   let { templateId } = useParams();
 
@@ -31,6 +32,7 @@ export const OfferLetter = ({ setContent }) => {
   } = useForm();
 
   const onSubmit = async (data) => {
+    setIsLoading(true);
     try {
       const response = await fetch(
         `https://legalbackend-aondtyyl6a-uc.a.run.app/templateGenerator/${templateId}`,
@@ -48,6 +50,7 @@ export const OfferLetter = ({ setContent }) => {
         throw new Error(response.statusText);
       }
 
+      setIsLoading(false);
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
 
@@ -55,13 +58,13 @@ export const OfferLetter = ({ setContent }) => {
         const { value, done } = await reader.read();
         if (done) break;
         const decodedChunk = decoder.decode(value, { stream: true });
-
         setContent((prevContent) => prevContent + decodedChunk);
       }
     } catch (error) {
       console.error("Failed to fetch data", error);
     }
   };
+
   return (
     <Card>
       <CardContent>
@@ -131,6 +134,8 @@ export const OfferLetter = ({ setContent }) => {
                 {...field}
                 label="Candidate Name"
                 variant="outlined"
+                type="date"
+                InputLabelProps={{ shrink: true }}
                 error={!!errors.candidateName}
                 helperText={
                   errors.candidateName ? errors.candidateName.message : ""
@@ -183,6 +188,8 @@ export const OfferLetter = ({ setContent }) => {
                 {...field}
                 label="Start Date"
                 variant="outlined"
+                type="date"
+                InputLabelProps={{ shrink: true }}
                 error={!!errors.startDate}
                 helperText={errors.startDate ? errors.startDate.message : ""}
               />
@@ -259,8 +266,15 @@ export const OfferLetter = ({ setContent }) => {
             )}
           />
 
-          <Button type="submit" variant="contained">
-            Submit
+          <Button
+            type="submit"
+            disabled={isLoading}
+            variant="contained"
+            sx={{
+              width: "90% !important",
+            }}
+          >
+            {isLoading ? "Loading..." : "Submit"}
           </Button>
         </Box>
       </CardContent>

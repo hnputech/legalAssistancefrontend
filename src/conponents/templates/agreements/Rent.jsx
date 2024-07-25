@@ -16,6 +16,7 @@ import MultiToggle from "../../multiToggle/MutiToggle";
 
 export const RentAgreement = ({ setContent }) => {
   const [active, setActive] = useState("gpt-4o");
+  const [isLoading, setIsLoading] = useState(false);
 
   let { templateId } = useParams();
   const navigate = useNavigate();
@@ -30,9 +31,7 @@ export const RentAgreement = ({ setContent }) => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    console.log(data);
-    console.log(data, "and", templateId);
-
+    setIsLoading(true);
     try {
       const response = await fetch(
         `https://legalbackend-aondtyyl6a-uc.a.run.app/templateGenerator/${templateId}`,
@@ -50,6 +49,7 @@ export const RentAgreement = ({ setContent }) => {
         throw new Error(response.statusText);
       }
 
+      setIsLoading(false);
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
 
@@ -57,7 +57,6 @@ export const RentAgreement = ({ setContent }) => {
         const { value, done } = await reader.read();
         if (done) break;
         const decodedChunk = decoder.decode(value, { stream: true });
-
         setContent((prevContent) => prevContent + decodedChunk);
       }
     } catch (error) {
@@ -202,6 +201,8 @@ export const RentAgreement = ({ setContent }) => {
                 {...field}
                 label="Start Date"
                 variant="outlined"
+                type="date"
+                InputLabelProps={{ shrink: true }}
                 error={!!errors.startDate}
                 helperText={errors.startDate ? errors.startDate.message : ""}
               />
@@ -218,6 +219,8 @@ export const RentAgreement = ({ setContent }) => {
                 {...field}
                 label="End Date"
                 variant="outlined"
+                type="date"
+                InputLabelProps={{ shrink: true }}
                 error={!!errors.endDate}
                 helperText={errors.endDate ? errors.endDate.message : ""}
               />
@@ -244,8 +247,15 @@ export const RentAgreement = ({ setContent }) => {
             )}
           />
 
-          <Button type="submit" variant="contained">
-            Submit
+          <Button
+            type="submit"
+            disabled={isLoading}
+            variant="contained"
+            sx={{
+              width: "90% !important",
+            }}
+          >
+            {isLoading ? "Loading..." : "Submit"}
           </Button>
         </Box>
       </CardContent>
