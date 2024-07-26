@@ -17,13 +17,11 @@ import user from "../../assets/user.svg";
 import gpt40mini from "../../assets/saulbot.svg";
 import gpt3 from "../../assets/bot3.svg";
 
-import pdf from "../../assets/pdf.svg";
-
 import {
   chats,
   getCurrentUserData,
   getUserAlMassages,
-  uploadFiles,
+  // uploadFiles,
 } from "../../requests/chats";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { ChatsHistory } from "./ChatsHistory";
@@ -31,7 +29,6 @@ import { calculateCost, transformData } from "../../utils/chatHelperFunctions";
 
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import Button from "@mui/material/Button";
 import Badge from "@mui/material/Badge";
 import StorageIcon from "@mui/icons-material/Storage";
 import { useSelector, useDispatch } from "react-redux";
@@ -200,11 +197,11 @@ export const Chat = () => {
       fetchData();
     }
   }, [threadId]);
-  const toggleButton = () => {
-    setIsToggled(!isToggled);
-    hasRunRef.current = false;
-    handleNewChat();
-  };
+  // const toggleButton = () => {
+  //   setIsToggled(!isToggled);
+  //   hasRunRef.current = false;
+  //   handleNewChat();
+  // };
 
   const handleSend = async (message) => {
     const newMessage = {
@@ -255,19 +252,6 @@ export const Chat = () => {
     // Format messages for chatGPT API
     // API is expecting objects in format of { role: "user" or "assistant", "content": "message here"}
     // So we need to reformat
-
-    let apiMessages = chatMessages.map((messageObject) => {
-      let role = "";
-      if (
-        messageObject.sender === "Equall/Saul-Instruct-v1" ||
-        messageObject.sender === "AdaptLLM/law-chat"
-      ) {
-        role = "assistant";
-      } else {
-        role = "user";
-      }
-      return { role: role, content: messageObject.message };
-    });
 
     const tid = threadId && threadId.threadid ? threadId.threadid : threadId;
     const title = tid ? userData.find((item) => item.threadid === tid) : null;

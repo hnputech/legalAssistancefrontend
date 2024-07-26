@@ -1,4 +1,3 @@
-import React from "react";
 import { BasicCard } from ".";
 import { Typography } from "@mui/material";
 

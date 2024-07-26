@@ -1,4 +1,3 @@
-import * as React from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import AppBar from "@mui/material/AppBar";
@@ -67,7 +66,7 @@ export const SideBarLayout = () => {
             <Toolbar />
             <Box sx={{ overflow: "auto" }}>
               <List>
-                {sideBarData.map((item, index) => (
+                {sideBarData.map((item) => (
                   <ListItem key={item.title} disablePadding>
                     <ListItemButton onClick={() => navigate(item.link)}>
                       <ListItemIcon>
@@ -80,9 +79,11 @@ export const SideBarLayout = () => {
               </List>
               <Divider />
               <List>
-                {["All Documents"].map((text, index) => (
+                {["All Documents"].map((text) => (
                   <ListItem key={text} disablePadding>
-                    <ListItemButton onClick={() => navigate(item.link)}>
+                    <ListItemButton
+                    // onClick={() => navigate(item.link)}
+                    >
                       <ListItemIcon>
                         <img src={AllDocsIcon} width={30} height={30} />
                       </ListItemIcon>

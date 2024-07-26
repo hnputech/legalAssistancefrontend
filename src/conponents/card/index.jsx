@@ -1,26 +1,23 @@
-import * as React from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 
-import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 import leaseimg from "../../assets/lease.png";
-import { CardActionArea } from "@mui/material";
 
 export const BasicCard = ({
   icon = leaseimg,
   title = "Title",
   description = "description",
   id = "",
-  minWidth = 350,
-  maxWidth = 345,
+  // minWidth = 350,
+  // maxWidth = 345,
   hover = true,
 }) => {
   return (
     <Card
-      sx={(theme) => ({
+      sx={() => ({
         // minWidth: minWidth,
         // maxWidth: maxWidth,
         // width: "20vw",
@@ -39,7 +36,6 @@ export const BasicCard = ({
         },
       })}
     >
-      {/* <CardActionArea> */}
       <Link to={`/template/${id}`} underline="none">
         <CardContent style={{ color: "rgba(0, 0, 0, 0.87)" }}>
           <img src={icon} width={30} height={30} />
@@ -54,7 +50,6 @@ export const BasicCard = ({
           <Typography variant="body2">{description}.</Typography>
         </CardContent>
       </Link>
-      {/* </CardActionArea> */}
     </Card>
   );
 };

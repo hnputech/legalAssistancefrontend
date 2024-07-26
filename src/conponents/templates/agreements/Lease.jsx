@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   TextField,
@@ -53,6 +53,7 @@ export const LeaseAgreement = ({ setContent }) => {
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
 
+      // eslint-disable-next-line no-constant-condition
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;

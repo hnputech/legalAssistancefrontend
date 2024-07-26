@@ -1,4 +1,3 @@
-import React from "react";
 import "./filter.css";
 import { cardData } from "./const";
 

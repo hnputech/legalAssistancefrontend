@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { BasicCard } from "../card";
 import { CardContainer } from "../card/CardContainer";

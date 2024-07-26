@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import JoditEditor from "jodit-react";
 import showdown from "showdown";
 
@@ -60,74 +60,6 @@ export const TemplateEditor = ({ content, setContent }) => {
 
   const [documentName, setDocumentName] = useState("New document");
 
-  const fetchChatData = async () => {
-    try {
-      const response = await fetch(
-        "https://legalbackend-aondtyyl6a-uc.a.run.app/templateGenerator",
-        {
-          method: "POST",
-          headers: {
-            Accept: "application/json, text/plain, */*",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ userPrompt: "what you can do ?" }),
-        }
-      );
-
-      if (!response.ok || !response.body) {
-        throw new Error(response.statusText);
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        const decodedChunk = decoder.decode(value, { stream: true });
-        setContent((prevContent) => prevContent + decodedChunk);
-      }
-    } catch (error) {
-      console.error("Failed to fetch data", error);
-    }
-  };
-
-  // this is testing
-
-  // const printDocument = () => {
-  //   const input = document.getElementsByClassName("jodit-wysiwyg")[0];
-  //   if (!input) {
-  //     console.error("Editor content not found");
-  //     return;
-  //   }
-
-  //   // Clone the content in JoditEditor for manipulation
-  //   const clone = input.cloneNode(true);
-  //   clone.style.width = "800px"; // Set a fixed width for capturing
-  //   clone.style.maxWidth = "none"; // Remove any max-width constraints
-
-  //   // Append the clone to the body temporarily for it to be captured properly
-  //   document.body.appendChild(clone);
-
-  //   // Create a jsPDF instance
-  //   const pdf = new jsPDF("p", "pt", "a4");
-
-  //   // Generate the PDF
-  //   pdf.html(clone, {
-  //     callback: function(pdf) {
-  //       pdf.save(`${documentName || "New document"}.pdf`);
-
-  //       // Clean up the clone after rendering
-  //       document.body.removeChild(clone);
-  //     },
-  //     x: 10,
-  //     y: 15,
-  //     autoPaging: "text", // Enable auto pagination
-  //     html2canvas: {
-  //       scale: 0.5, // Scale down HTML to fit into the PDF
-  //     },
-  //   });
-  // };
   const printDocument = () => {
     // Find the Jodit editor content
     const input = document.getElementsByClassName("jodit-wysiwyg")[0];
@@ -140,7 +72,7 @@ export const TemplateEditor = ({ content, setContent }) => {
     const clone = input.cloneNode(true);
 
     // Apply consistent styling dimensions and ensure it aligns with A4 width
-    const pdfPageWidth = 595.28; // jsPDF A4 page width in points
+    // const pdfPageWidth = 595.28; // jsPDF A4 page width in points
 
     // Create a container div to apply the wrapping styles
     const container = document.createElement("div");
@@ -167,7 +99,7 @@ export const TemplateEditor = ({ content, setContent }) => {
 
     // Generate the PDF
     pdf.html(container, {
-      callback: function(pdf) {
+      callback: function (pdf) {
         pdf.save(`${documentName || "New document"}.pdf`);
 
         // Clean up the container after rendering
