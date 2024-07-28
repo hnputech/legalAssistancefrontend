@@ -76,7 +76,7 @@ export const ChatsHistory = ({
             <div
               style={{
                 // overflowY: "auto",
-                height: "20vh",
+                height: "25vh",
                 // width: "20rem",
               }}
             >
@@ -102,6 +102,30 @@ export const ChatsHistory = ({
                 }}
               >
                 Generate documents <PostAddIcon />
+              </Button>
+
+              <Button
+                sx={{
+                  "&:focus": {
+                    outline: "none",
+                    boxShadow: "none",
+                  },
+                  borderRight: "none",
+                  borderLeft: "none",
+                  borderRadius: "0",
+                }}
+                color="success"
+                onClick={() => navigate("/AllGeneratedTemplate/testing123")}
+                variant="outlined"
+                style={{
+                  textAlign: "center",
+                  width: "100%",
+                  padding: "10px",
+
+                  marginBottom: "10px",
+                }}
+              >
+                All Document
               </Button>
 
               <Divider />

@@ -22,7 +22,6 @@ export const EmploymentAgreement = ({
   documentName,
   setDocumentId,
 }) => {
-  console.log("======render ", content);
   const [active, setActive] = useState("gpt-4o");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -69,7 +68,6 @@ export const EmploymentAgreement = ({
       while (true) {
         const { value, done } = await reader.read();
         if (done) {
-          console.log("in in loop");
           const documentid = uuidv4();
           setDocumentId(documentid);
           // const name = "new document";

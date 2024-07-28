@@ -13,7 +13,6 @@ import {
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -42,8 +41,9 @@ import { addFile, setThreadFiles } from "../../store/features/chatSlice";
 import showdown from "showdown";
 import { botMessage } from "./const";
 import MultiToggle from "../multiToggle/MutiToggle";
-import { Button } from "@mui/material";
 import { PromptList } from "./PromptList";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 
 let pattern = /【\d+:\d+†source】/g;
 
@@ -451,7 +451,19 @@ export const Chat = () => {
         aria-labelledby="scroll-dialog-title"
         aria-describedby="scroll-dialog-description"
       >
-        <DialogTitle id="scroll-dialog-title">Subscribe</DialogTitle>
+        <DialogTitle id="scroll-dialog-title">Prompts</DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={handleDialogClose}
+          sx={{
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
         <DialogContent dividers={scroll === "paper"}>
           <DialogContentText
             id="scroll-dialog-description"
@@ -461,10 +473,6 @@ export const Chat = () => {
             <PromptList handleTyping={handleTyping} />
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button>Cancel</Button>
-          <Button>Subscribe</Button>
-        </DialogActions>
       </Dialog>
 
       {!ismobile ? (

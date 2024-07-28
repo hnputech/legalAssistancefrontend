@@ -29,6 +29,7 @@ export const PromptList = ({ handleTyping }) => {
           <ListItemButton
             onClick={(event) => handleListItemClick(event, item)}
             key={item}
+            sx={{ borderBottom: "1px solid black" }}
           >
             <ListItemText primary={item} />
           </ListItemButton>

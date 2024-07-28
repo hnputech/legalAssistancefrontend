@@ -1,13 +1,17 @@
 import { useState, useEffect } from "react";
 import { Grid } from "@mui/material";
 import { TemplateEditor } from "../editer";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getUserTemplateById } from "../../requests/template";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 export const EditTemplate = () => {
   const [content, setContent] = useState("");
   const [documentName, setDocumentName] = useState("");
   const { documentId } = useParams();
+  const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,6 +25,16 @@ export const EditTemplate = () => {
   }, [documentId]);
   return (
     <Grid item xs={12} md={8} style={{ padding: "20px" }}>
+      {isMobile ? (
+        <ArrowBackIcon
+          onClick={() => {
+            navigate("/AllGeneratedTemplate/testing123");
+          }}
+          style={{
+            marginBottom: "10px",
+          }}
+        />
+      ) : null}
       <TemplateEditor
         content={content}
         setContent={setContent}
