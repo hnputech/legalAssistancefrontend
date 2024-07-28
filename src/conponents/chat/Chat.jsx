@@ -8,9 +8,15 @@ import {
   MessageInput,
   TypingIndicator,
   Avatar,
+  InputToolbox,
 } from "@chatscope/chat-ui-kit-react";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
 import got40 from "../../assets/bot.svg";
 import user from "../../assets/user.svg";
@@ -36,6 +42,8 @@ import { addFile, setThreadFiles } from "../../store/features/chatSlice";
 import showdown from "showdown";
 import { botMessage } from "./const";
 import MultiToggle from "../multiToggle/MutiToggle";
+import { Button } from "@mui/material";
+import { PromptList } from "./PromptList";
 
 let pattern = /【\d+:\d+†source】/g;
 
@@ -70,12 +78,17 @@ export const Chat = () => {
   const [title, setTitle] = useState("");
   const [active, setActive] = useState("gpt440");
 
+  const [openDialog, setOpenDialog] = useState(false);
+  const [scroll, setScroll] = useState("paper");
+  const [msgInputValue, setMsgInputValue] = useState("");
+
   const filesArray = useSelector((state) => state.file);
   const dispatch = useDispatch();
 
   const fileInputRef = useRef(null);
   const hasRunRef = useRef(false);
   const ismobile = useIsMobile();
+  const descriptionElementRef = useRef(null);
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -86,6 +99,9 @@ export const Chat = () => {
   const inputRef = useRef(null);
 
   //  scroll end
+
+  // // typing ref add this for adding prompt fro the list
+  const typingRef = useRef(null);
 
   if (!userId) {
     userId = active;
@@ -102,7 +118,6 @@ export const Chat = () => {
   });
 
   const handleFocus = () => {
-    console.log("=========");
     if (inputRef.current) {
       inputRef.current.style.paddingBottom = "20px";
     }
@@ -203,6 +218,29 @@ export const Chat = () => {
   //   handleNewChat();
   // };
 
+  useEffect(() => {
+    if (openDialog) {
+      const { current: descriptionElement } = descriptionElementRef;
+      if (descriptionElement !== null) {
+        descriptionElement.focus();
+      }
+    }
+  }, [openDialog]);
+
+  const handleTyping = (prompt) => {
+    setMsgInputValue(prompt);
+    typingRef.current?.focus();
+    handleDialogClose();
+  };
+  const handleDialogOpen = (scrollType = "paper") => {
+    setOpenDialog(true);
+    setScroll(scrollType);
+  };
+
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+  };
+
   const handleSend = async (message) => {
     const newMessage = {
       message,
@@ -220,6 +258,7 @@ export const Chat = () => {
     // ====
     await processMessageToChatGPT(message, newMessages, active);
     // ====
+    setMsgInputValue("");
   };
 
   const handleChatChange = (threadId) => {
@@ -405,6 +444,29 @@ export const Chat = () => {
         <CircularProgress color="inherit" />
       </Backdrop>
 
+      <Dialog
+        open={openDialog}
+        onClose={handleDialogClose}
+        scroll={scroll}
+        aria-labelledby="scroll-dialog-title"
+        aria-describedby="scroll-dialog-description"
+      >
+        <DialogTitle id="scroll-dialog-title">Subscribe</DialogTitle>
+        <DialogContent dividers={scroll === "paper"}>
+          <DialogContentText
+            id="scroll-dialog-description"
+            ref={descriptionElementRef}
+            tabIndex={-1}
+          >
+            <PromptList handleTyping={handleTyping} />
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button>Cancel</Button>
+          <Button>Subscribe</Button>
+        </DialogActions>
+      </Dialog>
+
       {!ismobile ? (
         <ChatsHistory
           userData={userData}
@@ -562,16 +624,37 @@ export const Chat = () => {
                   );
                 })}
               </MessageList>
-
+              <InputToolbox style={{ order: 1 }}>
+                <button
+                  onClick={() => handleDialogOpen("paper")}
+                  style={{
+                    width: "100px",
+                    height: "40px",
+                    backgroundColor: "#c6e3fa",
+                    // zIndex: 20,
+                    marginBottom: "-10px",
+                    // borderRadius: "50px",
+                    borderTopLeftRadius: "1rem",
+                    borderTopRightRadius: "1rem",
+                    textAlign: "center",
+                    color: "rgba(0, 0, 0, .87)",
+                  }}
+                >
+                  Prompts
+                </button>
+              </InputToolbox>
               <MessageInput
+                ref={typingRef}
                 placeholder="Type message here"
                 onSend={handleSend}
-                style={{ paddingTop: "15px" }}
+                style={{ paddingTop: "15px", order: 2 }}
                 attachButton={true}
                 onAttachClick={handleAttachClick}
                 disabled={isTyping || isUploading}
                 onFocus={handleFocus} // Attach the onFocus event
                 onBlur={handleBlur}
+                onChange={setMsgInputValue}
+                value={msgInputValue}
               />
             </ChatContainer>
           </div>
