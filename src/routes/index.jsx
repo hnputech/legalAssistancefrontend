@@ -3,7 +3,8 @@ import { Chat } from "../conponents/chat/Chat";
 import { Template } from "../conponents/templates/Template";
 import SellPurchase from "../conponents/templates/agreements";
 import { SideBarLayout } from "../conponents/layouts/SideBarLayout";
-import { DenseTable } from "../App";
+import { AllGeneratedTemplate } from "../conponents/table";
+import { EditTemplate } from "../conponents/templates/EditTemplate";
 // export const router = createBrowserRouter([
 
 //   {
@@ -38,8 +39,12 @@ export const router = createBrowserRouter([
         element: <SellPurchase />,
       },
       {
-        path: "/DenseTable",
-        element: <DenseTable />,
+        path: "/AllGeneratedTemplate/:userId",
+        element: <AllGeneratedTemplate />,
+      },
+      {
+        path: "/show/:documentId",
+        element: <EditTemplate />,
       },
     ],
   },

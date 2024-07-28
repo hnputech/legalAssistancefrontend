@@ -10,11 +10,18 @@ import {
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { v4 as uuidv4 } from "uuid";
 import { searchdaata } from "../const";
 import { useIsMobile } from "../../../hooks/useIsMobile";
 import MultiToggle from "../../multiToggle/MutiToggle";
+import { addTemplateDocuments } from "../../../requests/template";
 
-export const Patent = ({ setContent }) => {
+export const Patent = ({
+  setContent,
+  content,
+  documentName,
+  setDocumentId,
+}) => {
   const [active, setActive] = useState("gpt-4o");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -31,7 +38,10 @@ export const Patent = ({ setContent }) => {
   } = useForm();
 
   const onSubmit = async (data) => {
+    console.log("=====data", data);
     setIsLoading(true);
+    if (content !== "") setContent("");
+
     try {
       const response = await fetch(
         `https://legalbackend-aondtyyl6a-uc.a.run.app/templateGenerator/${templateId}`,
@@ -52,19 +62,36 @@ export const Patent = ({ setContent }) => {
       setIsLoading(false);
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
+      let accumulatedContent = ""; // Local variable to accumulate content
 
       // eslint-disable-next-line no-constant-condition
       while (true) {
         const { value, done } = await reader.read();
-        if (done) break;
+        if (done) {
+          console.log("in in loop");
+          const documentid = uuidv4();
+          setDocumentId(documentid);
+
+          // const name = "new document";
+          const words = accumulatedContent.trim().split(/\s+/).length;
+          await addTemplateDocuments(
+            documentid,
+            documentName,
+            templateId,
+            words,
+            accumulatedContent,
+            "testing123"
+          );
+          break;
+        }
         const decodedChunk = decoder.decode(value, { stream: true });
+        accumulatedContent += decodedChunk;
         setContent((prevContent) => prevContent + decodedChunk);
       }
     } catch (error) {
       console.error("Failed to fetch data", error);
     }
   };
-
   return (
     <Card>
       <CardContent>

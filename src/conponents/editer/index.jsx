@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import JoditEditor from "jodit-react";
 import showdown from "showdown";
 
@@ -7,8 +7,10 @@ import { saveAs } from "file-saver";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import ArticleSharpIcon from "@mui/icons-material/ArticleSharp";
 import ContentCopySharpIcon from "@mui/icons-material/ContentCopySharp";
+import SaveAsIcon from "@mui/icons-material/SaveAs";
 import { Grid, IconButton, TextField } from "@mui/material";
 import { useIsMobile } from "../../hooks/useIsMobile";
+import { updateUserTemplate } from "../../requests/template";
 // import { useSelector } from "react-redux";
 
 const config = {
@@ -54,11 +56,15 @@ const converter = new showdown.Converter({
   simplifiedAutoLink: true,
   strikethrough: true,
 });
-export const TemplateEditor = ({ content, setContent }) => {
+export const TemplateEditor = ({
+  content,
+  setContent,
+  documentName,
+  setDocumentName,
+  documentId,
+}) => {
   const editor = useRef(null);
   const ismobile = useIsMobile();
-
-  const [documentName, setDocumentName] = useState("New document");
 
   const printDocument = () => {
     // Find the Jodit editor content
@@ -130,13 +136,20 @@ export const TemplateEditor = ({ content, setContent }) => {
       alert("Content copied to clipboard");
     });
   };
+
+  const handleSaveDocument = async () => {
+    const words = content.trim().split(/\s+/).length;
+    await updateUserTemplate(documentId, documentName, content, words);
+  };
   //  testing end
 
   return (
     <Grid
       container
       style={{
-        width: "100%",
+        width: ismobile ? "90vw" : "55vw",
+
+        // width: "100%",
         backgroundColor: "white",
       }}
     >
@@ -145,7 +158,9 @@ export const TemplateEditor = ({ content, setContent }) => {
           sx={{
             // marginLeft: "10px",
             marginTop: "10px",
-            width: "100%",
+            width: ismobile ? "90vw" : "55vw",
+
+            // width: "100%",
             maxWidth: "400px",
           }}
           value={documentName}
@@ -167,8 +182,6 @@ export const TemplateEditor = ({ content, setContent }) => {
           gap: "15px",
         }}
       >
-        {/* <button onClick={() => fetchChatData()}>fetch data</button> */}
-
         <IconButton
           title="Export as Word Document"
           sx={{ "&:hover": { color: "blue" } }}
@@ -191,6 +204,13 @@ export const TemplateEditor = ({ content, setContent }) => {
           onClick={() => handleCopyClipboard()}
         >
           <ContentCopySharpIcon />
+        </IconButton>
+        <IconButton
+          title="Save "
+          sx={{ "&:hover": { color: "green" } }}
+          onClick={() => handleSaveDocument()}
+        >
+          <SaveAsIcon />
         </IconButton>
       </Grid>
 

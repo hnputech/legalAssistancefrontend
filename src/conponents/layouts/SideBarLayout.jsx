@@ -82,7 +82,9 @@ export const SideBarLayout = () => {
                 {["All Documents"].map((text) => (
                   <ListItem key={text} disablePadding>
                     <ListItemButton
-                    // onClick={() => navigate(item.link)}
+                      onClick={() =>
+                        navigate("/AllGeneratedTemplate/testing123")
+                      }
                     >
                       <ListItemIcon>
                         <img src={AllDocsIcon} width={30} height={30} />
