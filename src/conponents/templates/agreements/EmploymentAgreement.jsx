@@ -11,6 +11,11 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { useParams, useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import moment from "moment";
+
 import { searchdaata } from "../const";
 import { useIsMobile } from "../../../hooks/useIsMobile";
 import MultiToggle from "../../multiToggle/MutiToggle";
@@ -35,10 +40,16 @@ export const EmploymentAgreement = ({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      date: moment(),
+    },
+  });
 
   const onSubmit = async (data) => {
-    console.log("=====data", data);
+    if (data.date) {
+      data.date = moment(data.date).format("MM/DD/YYYY");
+    }
     setIsLoading(true);
     if (content !== "") setContent("");
 
@@ -253,24 +264,30 @@ export const EmploymentAgreement = ({
               />
             )}
           />
+
           <Controller
             name="date"
             control={control}
-            defaultValue=""
-            rules={{ required: "Joining date is required" }}
+            rules={{ required: "Date is required" }}
             render={({ field }) => (
-              <TextField
-                {...field}
-                label="What is the joining date?"
-                variant="outlined"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                error={!!errors.position}
-                helperText={errors.position ? errors.position.message : ""}
-              />
+              <LocalizationProvider dateAdapter={AdapterMoment}>
+                <DatePicker
+                  {...field}
+                  label="Select date"
+                  value={field.value}
+                  onChange={(date) => field.onChange(date)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      error={!!errors.date}
+                      helperText={errors.date ? errors.date.message : ""}
+                    />
+                  )}
+                />
+              </LocalizationProvider>
             )}
           />
-
           <Button
             type="submit"
             disabled={isLoading}

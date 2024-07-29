@@ -11,6 +11,12 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { v4 as uuidv4 } from "uuid";
+
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import moment from "moment";
+
 import { searchdaata } from "../const";
 import { useIsMobile } from "../../../hooks/useIsMobile";
 import MultiToggle from "../../multiToggle/MutiToggle";
@@ -35,9 +41,22 @@ export const LoanAgreement = ({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      loanGivenDate: moment(),
+      loanReturningDate: moment(),
+    },
+  });
 
   const onSubmit = async (data) => {
+    if (data.loanGivenDate) {
+      data.loanGivenDate = moment(data.loanGivenDate).format("MM/DD/YYYY");
+    }
+    if (data.loanReturningDate) {
+      data.loanReturningDate = moment(data.loanReturningDate).format(
+        "MM/DD/YYYY"
+      );
+    }
     console.log("=====data", data);
     setIsLoading(true);
     if (content !== "") setContent("");
@@ -216,42 +235,54 @@ export const LoanAgreement = ({
           <Controller
             name="loanGivenDate"
             control={control}
-            defaultValue=""
-            rules={{ required: "Loan Given Date is required" }}
+            rules={{ required: "loanGivenDate is required" }}
             render={({ field }) => (
-              <TextField
-                {...field}
-                label="Loan Given Date"
-                variant="outlined"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                error={!!errors.loanGivenDate}
-                helperText={
-                  errors.loanGivenDate ? errors.loanGivenDate.message : ""
-                }
-              />
+              <LocalizationProvider dateAdapter={AdapterMoment}>
+                <DatePicker
+                  {...field}
+                  label="Select loanGivenDate"
+                  value={field.value}
+                  onChange={(date) => field.onChange(date)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      error={!!errors.loanGivenDate}
+                      helperText={
+                        errors.loanGivenDate ? errors.loanGivenDate.message : ""
+                      }
+                    />
+                  )}
+                />
+              </LocalizationProvider>
             )}
           />
 
           <Controller
             name="loanReturningDate"
             control={control}
-            defaultValue=""
-            rules={{ required: "Loan Returning Date is required" }}
+            rules={{ required: "loanReturningDate is required" }}
             render={({ field }) => (
-              <TextField
-                {...field}
-                label="Loan Returning Date"
-                variant="outlined"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                error={!!errors.loanReturningDate}
-                helperText={
-                  errors.loanReturningDate
-                    ? errors.loanReturningDate.message
-                    : ""
-                }
-              />
+              <LocalizationProvider dateAdapter={AdapterMoment}>
+                <DatePicker
+                  {...field}
+                  label="Select loanReturningDate"
+                  value={field.value}
+                  onChange={(date) => field.onChange(date)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      error={!!errors.loanReturningDate}
+                      helperText={
+                        errors.loanReturningDate
+                          ? errors.loanReturningDate.message
+                          : ""
+                      }
+                    />
+                  )}
+                />
+              </LocalizationProvider>
             )}
           />
 

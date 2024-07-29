@@ -11,6 +11,12 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { v4 as uuidv4 } from "uuid";
+
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import moment from "moment";
+
 import { searchdaata } from "../const";
 import { useIsMobile } from "../../../hooks/useIsMobile";
 import MultiToggle from "../../multiToggle/MutiToggle";
@@ -35,9 +41,16 @@ export const Patent = ({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      filingDate: moment(),
+    },
+  });
 
   const onSubmit = async (data) => {
+    if (data.filingDate) {
+      data.filingDate = moment(data.filingDate).format("MM/DD/YYYY");
+    }
     console.log("=====data", data);
     setIsLoading(true);
     if (content !== "") setContent("");
@@ -314,18 +327,26 @@ export const Patent = ({
           <Controller
             name="filingDate"
             control={control}
-            defaultValue=""
-            rules={{ required: "Filing Date is required" }}
+            rules={{ required: "filingDate is required" }}
             render={({ field }) => (
-              <TextField
-                {...field}
-                label="Filing Date"
-                variant="outlined"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                error={!!errors.filingDate}
-                helperText={errors.filingDate ? errors.filingDate.message : ""}
-              />
+              <LocalizationProvider dateAdapter={AdapterMoment}>
+                <DatePicker
+                  {...field}
+                  label="Select filingDate"
+                  value={field.value}
+                  onChange={(date) => field.onChange(date)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      error={!!errors.filingDate}
+                      helperText={
+                        errors.filingDate ? errors.filingDate.message : ""
+                      }
+                    />
+                  )}
+                />
+              </LocalizationProvider>
             )}
           />
 

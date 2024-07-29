@@ -11,6 +11,12 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { v4 as uuidv4 } from "uuid";
+
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import moment from "moment";
+
 import { searchdaata } from "../const";
 import { useIsMobile } from "../../../hooks/useIsMobile";
 import MultiToggle from "../../multiToggle/MutiToggle";
@@ -35,9 +41,18 @@ export const Partnership = ({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      dateOfPartnerShip: moment(),
+    },
+  });
 
   const onSubmit = async (data) => {
+    if (data.dateOfPartnerShip) {
+      data.dateOfPartnerShip = moment(data.dateOfPartnerShip).format(
+        "MM/DD/YYYY"
+      );
+    }
     console.log("=====data", data);
     setIsLoading(true);
     if (content !== "") setContent("");
@@ -343,22 +358,28 @@ export const Partnership = ({
           <Controller
             name="dateOfPartnerShip"
             control={control}
-            defaultValue=""
-            rules={{ required: "Date of Partnership is required" }}
+            rules={{ required: "dateOfPartnerShip is required" }}
             render={({ field }) => (
-              <TextField
-                {...field}
-                label="Date of Partnership"
-                variant="outlined"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                error={!!errors.dateOfPartnerShip}
-                helperText={
-                  errors.dateOfPartnerShip
-                    ? errors.dateOfPartnerShip.message
-                    : ""
-                }
-              />
+              <LocalizationProvider dateAdapter={AdapterMoment}>
+                <DatePicker
+                  {...field}
+                  label="Select dateOfPartnerShip"
+                  value={field.value}
+                  onChange={(date) => field.onChange(date)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      error={!!errors.dateOfPartnerShip}
+                      helperText={
+                        errors.dateOfPartnerShip
+                          ? errors.dateOfPartnerShip.message
+                          : ""
+                      }
+                    />
+                  )}
+                />
+              </LocalizationProvider>
             )}
           />
 

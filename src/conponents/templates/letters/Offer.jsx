@@ -11,6 +11,12 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import moment from "moment";
+
 import { searchdaata } from "../const";
 import { useIsMobile } from "../../../hooks/useIsMobile";
 import MultiToggle from "../../multiToggle/MutiToggle";
@@ -36,9 +42,16 @@ export const OfferLetter = ({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      startDate: moment(),
+    },
+  });
 
   const onSubmit = async (data) => {
+    if (data.startDate) {
+      data.startDate = moment(data.startDate).format("MM/DD/YYYY");
+    }
     console.log("=====data", data);
     setIsLoading(true);
     if (content !== "") setContent("");
@@ -208,18 +221,26 @@ export const OfferLetter = ({
           <Controller
             name="startDate"
             control={control}
-            defaultValue=""
-            rules={{ required: "Start Date is required" }}
+            rules={{ required: "startDate is required" }}
             render={({ field }) => (
-              <TextField
-                {...field}
-                label="Start Date"
-                variant="outlined"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                error={!!errors.startDate}
-                helperText={errors.startDate ? errors.startDate.message : ""}
-              />
+              <LocalizationProvider dateAdapter={AdapterMoment}>
+                <DatePicker
+                  {...field}
+                  label="Select startDate"
+                  value={field.value}
+                  onChange={(date) => field.onChange(date)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      error={!!errors.startDate}
+                      helperText={
+                        errors.startDate ? errors.startDate.message : ""
+                      }
+                    />
+                  )}
+                />
+              </LocalizationProvider>
             )}
           />
 

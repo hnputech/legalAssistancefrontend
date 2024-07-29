@@ -10,6 +10,12 @@ import {
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import moment from "moment";
+
 import { searchdaata } from "../const";
 import { useIsMobile } from "../../../hooks/useIsMobile";
 import MultiToggle from "../../multiToggle/MutiToggle";
@@ -35,10 +41,16 @@ export const PurchaseForm = ({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      dateOfPurchase: moment(),
+    },
+  });
 
   const onSubmit = async (data) => {
-    console.log("=====data", data);
+    if (data.dateOfPurchase) {
+      data.dateOfPurchase = moment(data.dateOfPurchase).format("MM/DD/YYYY");
+    }
     setIsLoading(true);
     if (content !== "") setContent("");
 
@@ -256,20 +268,28 @@ export const PurchaseForm = ({
           <Controller
             name="dateOfPurchase"
             control={control}
-            defaultValue=""
-            rules={{ required: "Date of purchase is required" }}
+            rules={{ required: "dateOfPurchase is required" }}
             render={({ field }) => (
-              <TextField
-                {...field}
-                label="Date of Purchase"
-                variant="outlined"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                error={!!errors.dateOfPurchase}
-                helperText={
-                  errors.dateOfPurchase ? errors.dateOfPurchase.message : ""
-                }
-              />
+              <LocalizationProvider dateAdapter={AdapterMoment}>
+                <DatePicker
+                  {...field}
+                  label="Select dateOfPurchase"
+                  value={field.value}
+                  onChange={(date) => field.onChange(date)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      error={!!errors.dateOfPurchase}
+                      helperText={
+                        errors.dateOfPurchase
+                          ? errors.dateOfPurchase.message
+                          : ""
+                      }
+                    />
+                  )}
+                />
+              </LocalizationProvider>
             )}
           />
 

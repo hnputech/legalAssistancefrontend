@@ -11,6 +11,12 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { v4 as uuidv4 } from "uuid";
+
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import moment from "moment";
+
 import { searchdaata } from "../const";
 import { useIsMobile } from "../../../hooks/useIsMobile";
 import MultiToggle from "../../multiToggle/MutiToggle";
@@ -35,9 +41,20 @@ export const LeaseAgreement = ({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      dateStart: moment(),
+      dateEnd: moment(),
+    },
+  });
 
   const onSubmit = async (data) => {
+    if (data.dateEnd) {
+      data.dateEnd = moment(data.dateEnd).format("MM/DD/YYYY");
+    }
+    if (data.dateStart) {
+      data.dateStart = moment(data.dateStart).format("MM/DD/YYYY");
+    }
     console.log("=====data", data);
     setIsLoading(true);
     if (content !== "") setContent("");
@@ -240,36 +257,50 @@ export const LeaseAgreement = ({
           <Controller
             name="dateStart"
             control={control}
-            defaultValue=""
-            rules={{ required: "Date Start is required" }}
+            rules={{ required: "dateStart is required" }}
             render={({ field }) => (
-              <TextField
-                {...field}
-                label="Date Start"
-                variant="outlined"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                error={!!errors.dateStart}
-                helperText={errors.dateStart ? errors.dateStart.message : ""}
-              />
+              <LocalizationProvider dateAdapter={AdapterMoment}>
+                <DatePicker
+                  {...field}
+                  label="Select dateStart"
+                  value={field.value}
+                  onChange={(date) => field.onChange(date)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      error={!!errors.dateStart}
+                      helperText={
+                        errors.dateStart ? errors.dateStart.message : ""
+                      }
+                    />
+                  )}
+                />
+              </LocalizationProvider>
             )}
           />
 
           <Controller
             name="dateEnd"
             control={control}
-            defaultValue=""
-            rules={{ required: "Date End is required" }}
+            rules={{ required: "dateEnd is required" }}
             render={({ field }) => (
-              <TextField
-                {...field}
-                label="Date End"
-                variant="outlined"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                error={!!errors.dateEnd}
-                helperText={errors.dateEnd ? errors.dateEnd.message : ""}
-              />
+              <LocalizationProvider dateAdapter={AdapterMoment}>
+                <DatePicker
+                  {...field}
+                  label="Select dateEnd"
+                  value={field.value}
+                  onChange={(date) => field.onChange(date)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      error={!!errors.dateEnd}
+                      helperText={errors.dateEnd ? errors.dateEnd.message : ""}
+                    />
+                  )}
+                />
+              </LocalizationProvider>
             )}
           />
 
@@ -283,7 +314,6 @@ export const LeaseAgreement = ({
                 {...field}
                 label="Date Late Payment Penalties"
                 variant="outlined"
-                type="date"
                 InputLabelProps={{ shrink: true }}
                 error={!!errors.dateLatePaymentPenalties}
                 helperText={
