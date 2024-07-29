@@ -149,12 +149,12 @@ export const StyledPaginationTable = ({ data = [], setTableDta }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data &&
+          {data.length > 0 &&
             (rowsPerPage > 0
               ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               : data
             ).map((row, index) => (
-              <StyledTableRow key={row.name}>
+              <StyledTableRow key={row.documentid}>
                 <StyledTableCell component="th" scope="row">
                   {row.name}
                 </StyledTableCell>
