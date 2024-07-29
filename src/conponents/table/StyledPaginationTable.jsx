@@ -21,6 +21,8 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
 import { useNavigate } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
+
 import { deleteUserTemplate } from "../../requests/template";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -105,11 +107,12 @@ function TablePaginationActions(props) {
   );
 }
 
-export const StyledPaginationTable = ({ data = [] }) => {
+export const StyledPaginationTable = ({ data = [], setTableDta }) => {
   console.log("==data", data);
   const navigate = useNavigate();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [loading, setLoading] = React.useState(-1);
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
@@ -123,8 +126,15 @@ export const StyledPaginationTable = ({ data = [] }) => {
     setPage(0);
   };
 
-  const handleDelete = async (documentId) => {
-    await deleteUserTemplate(documentId);
+  const handleDelete = async (documentId, index) => {
+    setLoading(index);
+    const res = await deleteUserTemplate(documentId);
+    if (res.length > 0) {
+      setTableDta((prev) => {
+        return prev.filter((item) => item.documentid != documentId);
+      });
+    }
+    setLoading(-1);
   };
 
   return (
@@ -143,7 +153,7 @@ export const StyledPaginationTable = ({ data = [] }) => {
             (rowsPerPage > 0
               ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               : data
-            ).map((row) => (
+            ).map((row, index) => (
               <StyledTableRow key={row.name}>
                 <StyledTableCell component="th" scope="row">
                   {row.name}
@@ -157,9 +167,13 @@ export const StyledPaginationTable = ({ data = [] }) => {
                     <IconButton
                       aria-label="delete"
                       size="small"
-                      onClick={() => handleDelete(row.documentid)}
+                      onClick={() => handleDelete(row.documentid, index)}
                     >
-                      <DeleteIcon fontSize="small" />
+                      {loading === index ? (
+                        <CircularProgress size={20} />
+                      ) : (
+                        <DeleteIcon fontSize="small" />
+                      )}
                     </IconButton>
                     <IconButton
                       aria-label="edit"
