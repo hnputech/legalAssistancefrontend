@@ -33,7 +33,6 @@ export const NDA = ({ setContent, content, documentName, setDocumentId }) => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    console.log("=====data", data);
     setIsLoading(true);
     if (content !== "") setContent("");
 
