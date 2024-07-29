@@ -229,8 +229,10 @@ export const Chat = () => {
 
   const handleTyping = (prompt) => {
     setMsgInputValue(prompt);
-    typingRef.current?.focus();
     handleDialogClose();
+    setTimeout(() => {
+      typingRef.current?.focus();
+    }, 0);
   };
   const handleDialogOpen = (scrollType = "paper") => {
     setOpenDialog(true);
@@ -632,20 +634,23 @@ export const Chat = () => {
                   );
                 })}
               </MessageList>
-              <InputToolbox style={{ order: 1 }}>
+              <InputToolbox style={{ order: 1, height: "0px" }}>
                 <button
                   onClick={() => handleDialogOpen("paper")}
                   style={{
                     width: "100px",
                     height: "40px",
                     backgroundColor: "#c6e3fa",
-                    // zIndex: 20,
-                    marginBottom: "-10px",
+                    zIndex: 20,
+                    marginTop: "-30px",
+                    // marginBottom: "-10px",
                     // borderRadius: "50px",
                     borderTopLeftRadius: "1rem",
                     borderTopRightRadius: "1rem",
                     textAlign: "center",
                     color: "rgba(0, 0, 0, .87)",
+                    border: "none",
+                    outline: "none",
                   }}
                 >
                   Prompts
@@ -655,7 +660,7 @@ export const Chat = () => {
                 ref={typingRef}
                 placeholder="Type message here"
                 onSend={handleSend}
-                style={{ paddingTop: "15px", order: 2 }}
+                style={{ paddingTop: "15px", order: 2, zIndex: 30 }}
                 attachButton={true}
                 onAttachClick={handleAttachClick}
                 disabled={isTyping || isUploading}
@@ -663,6 +668,7 @@ export const Chat = () => {
                 onBlur={handleBlur}
                 onChange={setMsgInputValue}
                 value={msgInputValue}
+                sendDisabled={!msgInputValue}
               />
             </ChatContainer>
           </div>
