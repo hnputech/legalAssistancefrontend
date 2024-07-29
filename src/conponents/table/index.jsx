@@ -6,9 +6,12 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { StyledPaginationTable } from "./StyledPaginationTable";
 import { getUserTemplatesData } from "../../requests/template";
 import { useIsMobile } from "../../hooks/useIsMobile";
+import { Backdrop, CircularProgress } from "@mui/material";
 
 export const AllGeneratedTemplate = () => {
   const [tableData, setTableDta] = useState([]);
+  const [open, setOpen] = useState(false);
+
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
@@ -16,9 +19,11 @@ export const AllGeneratedTemplate = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setOpen(true);
       const res = await getUserTemplatesData(userId);
       console.log("res", res);
       setTableDta(res);
+      setOpen(false);
     };
 
     if (userId) {
@@ -28,6 +33,12 @@ export const AllGeneratedTemplate = () => {
   console.log("======userid", userId);
   return (
     <>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={open}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       {isMobile ? (
         <ArrowBackIcon
           onClick={() => {
