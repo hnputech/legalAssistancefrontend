@@ -117,8 +117,8 @@
 @media screen and (max-width: 580px) {
   .charHistoryheading {
     font-size: medium;
-    padding-top: 25px;
-    padding-bottom: 25px;
+    /* padding-top: 25px;
+    padding-bottom: 25px; */
   }
 }
 
@@ -156,7 +156,8 @@
   align-items: center;
   justify-content: end;
   height: 58px;
-  margin-right: 20px;
+  /* margin-right: 20px; */
+  margin-right: 10px;
 }
 
 .toggle-button {
@@ -262,4 +263,31 @@ h6 {
   border-top: 0.5px solid #000000de;
   /* margin: 1em 0; */
   padding: 0;
+}
+
+.template-filter {
+  margin-left: 20px;
+  padding: 10px;
+  border-radius: 30px;
+}
+.template-filter:hover {
+  background: #e6e6e6;
+}
+
+.jodit-workplace + .jodit-status-bar {
+  display: none;
+}
+
+.jodit-editor__resize {
+  display: none;
+}
+
+.pdf-content {
+  width: calc(595.28pt - 40px); /* Ensure it accounts for padding */
+  max-width: none;
+  padding: 20px;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
 }

@@ -8,20 +8,25 @@ import {
   MessageInput,
   TypingIndicator,
   Avatar,
+  InputToolbox,
 } from "@chatscope/chat-ui-kit-react";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
-import bot from "../../assets/bot.svg";
+import got40 from "../../assets/bot.svg";
 import user from "../../assets/user.svg";
-import sualbot from "../../assets/saulbot.svg";
-import pdf from "../../assets/pdf.svg";
+import gpt40mini from "../../assets/saulbot.svg";
+import gpt3 from "../../assets/bot3.svg";
 
 import {
   chats,
   getCurrentUserData,
   getUserAlMassages,
-  uploadFiles,
+  // uploadFiles,
 } from "../../requests/chats";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { ChatsHistory } from "./ChatsHistory";
@@ -29,15 +34,24 @@ import { calculateCost, transformData } from "../../utils/chatHelperFunctions";
 
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import Button from "@mui/material/Button";
 import Badge from "@mui/material/Badge";
 import StorageIcon from "@mui/icons-material/Storage";
 import { useSelector, useDispatch } from "react-redux";
 import { addFile, setThreadFiles } from "../../store/features/chatSlice";
 import showdown from "showdown";
 import { botMessage } from "./const";
+import MultiToggle from "../multiToggle/MutiToggle";
+import { PromptList } from "./PromptList";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 
 let pattern = /【\d+:\d+†source】/g;
+
+const modelsList = [
+  { value: "gpt440", label: "4o" },
+  { value: "gpt4omini", label: "4o mini" },
+  { value: "gpt35turbo", label: "3.5 turbo" },
+];
 
 export const Chat = () => {
   const [messages, setMessages] = useState([
@@ -59,19 +73,26 @@ export const Chat = () => {
   });
 
   const [threadId, setThreadId] = useState(null);
-  const [isToggled, setIsToggled] = useState(true);
+  // const [isToggled, setIsToggled] = useState(true);
 
   const [title, setTitle] = useState("");
+  const [active, setActive] = useState("gpt440");
+
+  const [openDialog, setOpenDialog] = useState(false);
+  const [scroll, setScroll] = useState("paper");
+  const [msgInputValue, setMsgInputValue] = useState("");
+
   const filesArray = useSelector((state) => state.file);
   const dispatch = useDispatch();
 
   const fileInputRef = useRef(null);
   const hasRunRef = useRef(false);
   const ismobile = useIsMobile();
+  const descriptionElementRef = useRef(null);
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  const model = isToggled ? "gpt440" : "gpt35turbo";
+  // const model = isToggled ? "gpt440" : "gpt35turbo";
   let userId = urlParams.get("user");
 
   // scroll the mobile down
@@ -79,8 +100,11 @@ export const Chat = () => {
 
   //  scroll end
 
+  // // typing ref add this for adding prompt fro the list
+  const typingRef = useRef(null);
+
   if (!userId) {
-    userId = model;
+    userId = active;
   }
 
   // temporary state
@@ -94,7 +118,6 @@ export const Chat = () => {
   });
 
   const handleFocus = () => {
-    console.log("=========");
     if (inputRef.current) {
       inputRef.current.style.paddingBottom = "20px";
     }
@@ -124,6 +147,11 @@ export const Chat = () => {
     }
   };
 
+  const handleActiveStateChange = (state) => {
+    setActive(state);
+    hasRunRef.current = false;
+    handleNewChat();
+  };
   useEffect(() => {
     const fetchData = async () => {
       setOpen(true);
@@ -144,7 +172,7 @@ export const Chat = () => {
       hasRunRef.current = true;
       fetchData();
     }
-  }, [isToggled]);
+  }, [active]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -184,10 +212,35 @@ export const Chat = () => {
       fetchData();
     }
   }, [threadId]);
-  const toggleButton = () => {
-    setIsToggled(!isToggled);
-    hasRunRef.current = false;
-    handleNewChat();
+  // const toggleButton = () => {
+  //   setIsToggled(!isToggled);
+  //   hasRunRef.current = false;
+  //   handleNewChat();
+  // };
+
+  useEffect(() => {
+    if (openDialog) {
+      const { current: descriptionElement } = descriptionElementRef;
+      if (descriptionElement !== null) {
+        descriptionElement.focus();
+      }
+    }
+  }, [openDialog]);
+
+  const handleTyping = (prompt) => {
+    setMsgInputValue(prompt);
+    handleDialogClose();
+    setTimeout(() => {
+      typingRef.current?.focus();
+    }, 0);
+  };
+  const handleDialogOpen = (scrollType = "paper") => {
+    setOpenDialog(true);
+    setScroll(scrollType);
+  };
+
+  const handleDialogClose = () => {
+    setOpenDialog(false);
   };
 
   const handleSend = async (message) => {
@@ -205,8 +258,9 @@ export const Chat = () => {
     // How it responds, how it talks, etc.
     setIsTyping(true);
     // ====
-    await processMessageToChatGPT(message, newMessages, model);
+    await processMessageToChatGPT(message, newMessages, active);
     // ====
+    setMsgInputValue("");
   };
 
   const handleChatChange = (threadId) => {
@@ -240,19 +294,6 @@ export const Chat = () => {
     // API is expecting objects in format of { role: "user" or "assistant", "content": "message here"}
     // So we need to reformat
 
-    let apiMessages = chatMessages.map((messageObject) => {
-      let role = "";
-      if (
-        messageObject.sender === "Equall/Saul-Instruct-v1" ||
-        messageObject.sender === "AdaptLLM/law-chat"
-      ) {
-        role = "assistant";
-      } else {
-        role = "user";
-      }
-      return { role: role, content: messageObject.message };
-    });
-
     const tid = threadId && threadId.threadid ? threadId.threadid : threadId;
     const title = tid ? userData.find((item) => item.threadid === tid) : null;
 
@@ -279,11 +320,11 @@ export const Chat = () => {
         ]);
         const costCalculator =
           calculateCost(
-            (model = "gpt35turbo" ? 0.5 : 5),
+            model === "gpt35turbo" ? 0.5 : model === "gpt440" ? 5 : 0.15,
             response.tokkens.promptTokens
           ) +
           calculateCost(
-            (model = "gpt35turbo" ? 1.5 : 15),
+            model === "gpt35turbo" ? 1.5 : model === "gpt440" ? 15 : 0.6,
             response.tokkens.completionTokens
           );
         setTokenCost({
@@ -356,7 +397,8 @@ export const Chat = () => {
     try {
       const response = await axios.post(
         // "http://localhost:3001/upload",
-        "https://legalbackedn2-aondtyyl6a-uc.a.run.app/upload",
+        // "https://legalbackedn2-aondtyyl6a-uc.a.run.app/upload",
+        "https://legalbackend-aondtyyl6a-uc.a.run.app/upload",
 
         formData,
         {
@@ -404,6 +446,37 @@ export const Chat = () => {
         <CircularProgress color="inherit" />
       </Backdrop>
 
+      <Dialog
+        open={openDialog}
+        onClose={handleDialogClose}
+        scroll={scroll}
+        aria-labelledby="scroll-dialog-title"
+        aria-describedby="scroll-dialog-description"
+      >
+        <DialogTitle id="scroll-dialog-title">Prompts</DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={handleDialogClose}
+          sx={{
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+        <DialogContent dividers={scroll === "paper"}>
+          <DialogContentText
+            id="scroll-dialog-description"
+            ref={descriptionElementRef}
+            tabIndex={-1}
+          >
+            <PromptList handleTyping={handleTyping} />
+          </DialogContentText>
+        </DialogContent>
+      </Dialog>
+
       {!ismobile ? (
         <ChatsHistory
           userData={userData}
@@ -419,7 +492,9 @@ export const Chat = () => {
         className="container"
         sx={{
           maxWidth: "2000px",
-          height: "100vh",
+          // height: "100vh",
+          height: ismobile ? "100vh" : "calc(100vh - 64px)",
+
           width: ismobile ? "100%" : "70%",
         }}
       >
@@ -445,15 +520,11 @@ export const Chat = () => {
             ) : null}
             <div className="toggle-container">
               <div style={{ marginRight: "20px", fontWeight: "bold" }}>
-                {isToggled ? "GPT 4o" : "GPT -3.5"}
-              </div>
-
-              <div
-                className={`toggle-button ${isToggled ? "active" : ""}`}
-                onClick={toggleButton}
-              >
-                {" "}
-                <div className="toggle-circle"></div>
+                <MultiToggle
+                  active={active}
+                  setActive={handleActiveStateChange}
+                  toggleOptions={modelsList}
+                />
               </div>
             </div>
           </div>
@@ -510,7 +581,9 @@ export const Chat = () => {
                 paddingTop: "10px",
                 paddingBottom: "10px",
 
-                height: "85vh",
+                height: ismobile ? "85vh" : "calc(85vh - 40px)",
+
+                // height: "85vh",
               }}
             >
               <MessageList
@@ -544,10 +617,15 @@ export const Chat = () => {
                           size={ismobile ? "sm" : "md"}
                           name={message.sender}
                           src={
-                            message.sender === "assistant" && isToggled
-                              ? bot
-                              : message.sender === "assistant" && !isToggled
-                              ? sualbot
+                            message.sender === "assistant" &&
+                            active === "gpt440"
+                              ? got40
+                              : message.sender === "assistant" &&
+                                active === "gpt4omini"
+                              ? gpt40mini
+                              : message.sender === "assistant" &&
+                                active === "gpt35turbo"
+                              ? gpt3
                               : user
                           }
                         />
@@ -556,16 +634,41 @@ export const Chat = () => {
                   );
                 })}
               </MessageList>
-
+              <InputToolbox style={{ order: 1, height: "0px" }}>
+                <button
+                  onClick={() => handleDialogOpen("paper")}
+                  style={{
+                    width: "100px",
+                    height: "40px",
+                    backgroundColor: "#c6e3fa",
+                    zIndex: 20,
+                    marginTop: "-30px",
+                    // marginBottom: "-10px",
+                    // borderRadius: "50px",
+                    borderTopLeftRadius: "1rem",
+                    borderTopRightRadius: "1rem",
+                    textAlign: "center",
+                    color: "rgba(0, 0, 0, .87)",
+                    border: "none",
+                    outline: "none",
+                  }}
+                >
+                  Prompts
+                </button>
+              </InputToolbox>
               <MessageInput
+                ref={typingRef}
                 placeholder="Type message here"
                 onSend={handleSend}
-                style={{ paddingTop: "15px" }}
+                style={{ paddingTop: "15px", order: 2, zIndex: 30 }}
                 attachButton={true}
                 onAttachClick={handleAttachClick}
                 disabled={isTyping || isUploading}
                 onFocus={handleFocus} // Attach the onFocus event
                 onBlur={handleBlur}
+                onChange={setMsgInputValue}
+                value={msgInputValue}
+                sendDisabled={!msgInputValue}
               />
             </ChatContainer>
           </div>
