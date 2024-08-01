@@ -5,6 +5,7 @@ import SellPurchase from "../conponents/templates/agreements";
 import { SideBarLayout } from "../conponents/layouts/SideBarLayout";
 import { AllGeneratedTemplate } from "../conponents/table";
 import { EditTemplate } from "../conponents/templates/EditTemplate";
+import { Analyzer } from "../conponents/documentAnalyze/Analyzer";
 // export const router = createBrowserRouter([
 
 //   {
@@ -45,6 +46,10 @@ export const router = createBrowserRouter([
       {
         path: "/show/:documentId",
         element: <EditTemplate />,
+      },
+      {
+        path: "/analyze",
+        element: <Analyzer />,
       },
     ],
   },

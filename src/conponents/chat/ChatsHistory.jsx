@@ -5,6 +5,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import MenuIcon from "@mui/icons-material/Menu";
 import IconButton from "@mui/material/IconButton";
 import { Button, Divider } from "@mui/material";
+import SourceIcon from "@mui/icons-material/Source";
 
 import { SingleChatHistory } from "./SingleChatHistory";
 import CloseIcon from "@mui/icons-material/Close";
@@ -14,6 +15,8 @@ import { setThreadFiles } from "../../store/features/chatSlice";
 import AddIcon from "@mui/icons-material/Add";
 import PostAddIcon from "@mui/icons-material/PostAdd";
 import { useNavigate } from "react-router-dom";
+
+import AnalyzeIcon from "../../assets/analyze.png";
 
 export const ChatsHistory = ({
   userData,
@@ -76,11 +79,12 @@ export const ChatsHistory = ({
             <div
               style={{
                 // overflowY: "auto",
-                height: "25vh",
+                height: "30vh",
                 // width: "20rem",
               }}
             >
               <Button
+                endIcon={<PostAddIcon fontSize="large" />}
                 sx={{
                   "&:focus": {
                     outline: "none",
@@ -101,10 +105,11 @@ export const ChatsHistory = ({
                   marginBottom: "10px",
                 }}
               >
-                Generate documents <PostAddIcon />
+                Draft Documents
               </Button>
 
               <Button
+                endIcon={<SourceIcon />}
                 sx={{
                   "&:focus": {
                     outline: "none",
@@ -125,7 +130,32 @@ export const ChatsHistory = ({
                   marginBottom: "10px",
                 }}
               >
-                All Document
+                All Documents
+              </Button>
+
+              <Button
+                endIcon={<img src={AnalyzeIcon} width={20} height={20} />}
+                sx={{
+                  "&:focus": {
+                    outline: "none",
+                    boxShadow: "none",
+                  },
+                  borderRight: "none",
+                  borderLeft: "none",
+                  borderRadius: "0",
+                }}
+                color="warning"
+                onClick={() => navigate("/analyze")}
+                variant="outlined"
+                style={{
+                  textAlign: "center",
+                  width: "100%",
+                  padding: "10px",
+
+                  marginBottom: "10px",
+                }}
+              >
+                Document Analysis
               </Button>
 
               <Divider />
@@ -274,7 +304,7 @@ export const ChatsHistory = ({
             <h2 className="charHistoryheading">Uploaded Files</h2>
             <Divider />
           </div>
-          <div style={{ height: "30vh", overflowY: "auto" }}>
+          <div style={{ height: "25vh", overflowY: "auto" }}>
             <div>
               {threadId && threadId ? (
                 <ThreadFiles threadId={threadId.threadid} />

@@ -14,6 +14,7 @@ import { Outlet } from "react-router-dom";
 import chatIcon from "../../assets/chat.png";
 import documentsIcon from "../../assets/draft-.png";
 import AllDocsIcon from "../../assets/allodocs.png";
+import AnalyzeIcon from "../../assets/analyze.png";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { useNavigate } from "react-router-dom/dist";
 
@@ -29,6 +30,19 @@ const sideBarData = [
     title: "Draft Documents",
     link: "/template",
     icon: documentsIcon,
+  },
+];
+
+const sideBarData2 = [
+  {
+    title: "All Documents",
+    link: "/AllGeneratedTemplate/testing123",
+    icon: AllDocsIcon,
+  },
+  {
+    title: "Document Analysis",
+    link: "/analyze",
+    icon: AnalyzeIcon,
   },
 ];
 
@@ -79,17 +93,13 @@ export const SideBarLayout = () => {
               </List>
               <Divider />
               <List>
-                {["All Documents"].map((text) => (
-                  <ListItem key={text} disablePadding>
-                    <ListItemButton
-                      onClick={() =>
-                        navigate("/AllGeneratedTemplate/testing123")
-                      }
-                    >
+                {sideBarData2.map((item) => (
+                  <ListItem key={item.title} disablePadding>
+                    <ListItemButton onClick={() => navigate(item.link)}>
                       <ListItemIcon>
-                        <img src={AllDocsIcon} width={30} height={30} />
+                        <img src={item.icon} width={30} height={30} />
                       </ListItemIcon>
-                      <ListItemText primary={text} />
+                      <ListItemText primary={item.title} />
                     </ListItemButton>
                   </ListItem>
                 ))}
