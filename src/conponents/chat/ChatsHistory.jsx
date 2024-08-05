@@ -183,7 +183,7 @@ export const ChatsHistory = ({
             <div
               style={{
                 overflowY: "auto",
-                height: "45vh",
+                height: "40vh",
                 // width: "20rem",
               }}
             >
