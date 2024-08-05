@@ -80,7 +80,7 @@ export const ChatsHistory = ({
             <div
               style={{
                 // overflowY: "auto",
-                height: "30vh",
+                height: "32vh",
                 // width: "20rem",
               }}
             >
@@ -183,7 +183,7 @@ export const ChatsHistory = ({
             <div
               style={{
                 overflowY: "auto",
-                height: "40vh",
+                height: "39vh",
                 // width: "20rem",
               }}
             >
@@ -207,7 +207,7 @@ export const ChatsHistory = ({
               <h2 className="charHistoryheading">Uploaded Files</h2>
               <Divider />
             </div>
-            <div style={{ height: "30vh", overflowY: "auto" }}>
+            <div style={{ height: "29vh", overflowY: "auto" }}>
               {/* <Button
                 onClick={() => {
                   handleUploadFile();
