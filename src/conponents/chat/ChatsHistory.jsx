@@ -74,6 +74,7 @@ export const ChatsHistory = ({
               display: "flex",
               flexDirection: "column",
               overflow: "hidden",
+              width: "300px",
             }}
           >
             <div
