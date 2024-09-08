@@ -74,7 +74,8 @@ export const NDA = ({ setContent, content, documentName, setDocumentId }) => {
             templateId,
             words,
             accumulatedContent,
-            "testing123"
+            `${localStorage.getItem("email")}-${active}`
+            // "testing123"
           );
           break;
         }

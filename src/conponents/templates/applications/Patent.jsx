@@ -93,7 +93,8 @@ export const Patent = ({
             templateId,
             words,
             accumulatedContent,
-            "testing123"
+            // "testing123",
+            `${localStorage.getItem("email")}-${active}`
           );
           break;
         }

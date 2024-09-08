@@ -4,7 +4,15 @@ import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import MenuIcon from "@mui/icons-material/Menu";
 import IconButton from "@mui/material/IconButton";
-import { Button, Divider } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Button,
+  Divider,
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
 import SourceIcon from "@mui/icons-material/Source";
 
 import { SingleChatHistory } from "./SingleChatHistory";
@@ -79,86 +87,102 @@ export const ChatsHistory = ({
             <div
               style={{
                 // overflowY: "auto",
-                height: "30vh",
+                // height: "30vh",
                 // width: "20rem",
+                marginTop: "70px",
               }}
             >
-              <Button
-                endIcon={<PostAddIcon fontSize="large" />}
-                sx={{
-                  "&:focus": {
-                    outline: "none",
-                    boxShadow: "none",
-                  },
-                  borderRight: "none",
-                  borderLeft: "none",
-                  borderRadius: "0",
-                }}
-                color="secondary"
-                onClick={() => navigate("template")}
-                variant="outlined"
-                style={{
-                  textAlign: "center",
-                  width: "100%",
-                  padding: "10px",
-                  marginTop: "10px",
-                  marginBottom: "10px",
-                }}
-              >
-                Draft Documents
-              </Button>
+              {/* <Accordion defaultExpanded sx={{ marginBottom: "20px" }}>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1-content"
+                  id="panel1-header"
+                >
+                  Documents{" "}
+                </AccordionSummary>
+                <AccordionDetails sx={{ margin: 0, padding: 0 }}>
+                  <div>
+                    <Button
+                      endIcon={<PostAddIcon fontSize="large" />}
+                      sx={{
+                        "&:focus": {
+                          outline: "none",
+                          boxShadow: "none",
+                        },
+                        borderRight: "none",
+                        borderLeft: "none",
+                        borderRadius: "0",
+                      }}
+                      color="secondary"
+                      onClick={() => navigate("template")}
+                      variant="outlined"
+                      style={{
+                        textAlign: "center",
+                        width: "100%",
+                        padding: "10px",
+                        marginTop: "10px",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      Draft Documents
+                    </Button>
 
-              <Button
-                endIcon={<SourceIcon />}
-                sx={{
-                  "&:focus": {
-                    outline: "none",
-                    boxShadow: "none",
-                  },
-                  borderRight: "none",
-                  borderLeft: "none",
-                  borderRadius: "0",
-                }}
-                color="success"
-                onClick={() => navigate("/AllGeneratedTemplate/testing123")}
-                variant="outlined"
-                style={{
-                  textAlign: "center",
-                  width: "100%",
-                  padding: "10px",
+                    <Button
+                      endIcon={<SourceIcon />}
+                      sx={{
+                        "&:focus": {
+                          outline: "none",
+                          boxShadow: "none",
+                        },
+                        borderRight: "none",
+                        borderLeft: "none",
+                        borderRadius: "0",
+                      }}
+                      color="success"
+                      onClick={() =>
+                        navigate("/AllGeneratedTemplate/testing123")
+                      }
+                      variant="outlined"
+                      style={{
+                        textAlign: "center",
+                        width: "100%",
+                        padding: "10px",
 
-                  marginBottom: "10px",
-                }}
-              >
-                All Documents
-              </Button>
+                        marginBottom: "10px",
+                      }}
+                    >
+                      All Documents
+                    </Button>
 
-              <Button
-                endIcon={<img src={AnalyzeIcon} width={20} height={20} />}
-                sx={{
-                  "&:focus": {
-                    outline: "none",
-                    boxShadow: "none",
-                  },
-                  borderRight: "none",
-                  borderLeft: "none",
-                  borderRadius: "0",
-                }}
-                color="warning"
-                onClick={() => navigate("/analyze")}
-                variant="outlined"
-                style={{
-                  textAlign: "center",
-                  width: "100%",
-                  padding: "10px",
+                    <Button
+                      endIcon={<img src={AnalyzeIcon} width={20} height={20} />}
+                      sx={{
+                        "&:focus": {
+                          outline: "none",
+                          boxShadow: "none",
+                        },
+                        borderRight: "none",
+                        borderLeft: "none",
+                        borderRadius: "0",
+                      }}
+                      color="warning"
+                      onClick={() => navigate("/analyze")}
+                      variant="outlined"
+                      style={{
+                        textAlign: "center",
+                        width: "100%",
+                        padding: "10px",
 
-                  marginBottom: "10px",
-                }}
-              >
-                Document Analysis
-              </Button>
+                        marginBottom: "10px",
+                      }}
+                    >
+                      Document Analysis
+                    </Button>
+                  </div>
+                </AccordionDetails>
+              </Accordion> */}
 
-              <Divider />
+              {/* <Divider /> */}
               <Button
                 sx={{
                   "&:focus": {
@@ -384,3 +408,36 @@ const ThreadFiles = ({ threadId }) => {
     </div>
   );
 };
+
+// {isMobile ? (
+//   <div>
+//     <IconButton
+//       size="large"
+//       aria-label="account of current user"
+//       aria-controls="menu-appbar"
+//       aria-haspopup="true"
+//       onClick={handleMenu}
+//       color="inherit"
+//     >
+//       <MoreVert />
+//     </IconButton>
+//     <Menu
+//       id="menu-appbar"
+//       anchorEl={anchorEl}
+//       anchorOrigin={{
+//         vertical: "top",
+//         horizontal: "right",
+//       }}
+//       keepMounted
+//       transformOrigin={{
+//         vertical: "top",
+//         horizontal: "right",
+//       }}
+//       open={Boolean(anchorEl)}
+//       onClose={handleClose}
+//     >
+//       <MenuItem onClick={handleClose}>Profile</MenuItem>
+//       <MenuItem onClick={handleClose}>My account</MenuItem>
+//     </Menu>
+//   </div>
+// ) : null}

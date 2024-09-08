@@ -47,12 +47,19 @@ import CloseIcon from "@mui/icons-material/Close";
 
 let pattern = /【\d+:\d+†source】/g;
 
-const modelsList = [
-  { value: "gpt440", label: "4o" },
-  { value: "gpt4omini", label: "4o mini" },
-  { value: "gpt35turbo", label: "3.5 turbo" },
-];
+// const modelsList = [
+//   { value: "gpt440", label: "4o" },
+//   { value: "gpt4omini", label: "4o mini" },
+//   { value: "gpt35turbo", label: "3.5 turbo" },
+// ];
 
+// this is new one
+const modelsList = [
+  { value: "gpt-4o", label: "4o" },
+  { value: "gpt-4o-mini", label: "4o mini" },
+  { value: "gpt-3.5-turbo", label: "3.5 turbo" },
+];
+// const modelsLIST = ["gpt-4o", "gpt-4o-mini", "gpt-3.5-turbo"];
 export const Chat = () => {
   const [messages, setMessages] = useState([
     {
@@ -76,7 +83,10 @@ export const Chat = () => {
   // const [isToggled, setIsToggled] = useState(true);
 
   const [title, setTitle] = useState("");
-  const [active, setActive] = useState("gpt440");
+  // const [active, setActive] = useState("gpt440");
+
+  // this is new one
+  const [active, setActive] = useState("gpt-4o");
 
   const [openDialog, setOpenDialog] = useState(false);
   const [scroll, setScroll] = useState("paper");
@@ -93,7 +103,11 @@ export const Chat = () => {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   // const model = isToggled ? "gpt440" : "gpt35turbo";
-  let userId = urlParams.get("user");
+
+  // let userId = urlParams.get("user");
+
+  // this is new one
+  let userId = `${localStorage.getItem("email")}-${active}`;
 
   // scroll the mobile down
   const inputRef = useRef(null);
@@ -121,24 +135,24 @@ export const Chat = () => {
     if (inputRef.current) {
       inputRef.current.style.paddingBottom = "20px";
     }
-    if (ismobile) {
-      setTimeout(() => {
-        if (
-          inputRef.current &&
-          typeof inputRef.current.scrollIntoView === "function"
-        ) {
-          // Scroll the input element into view smoothly and center it in the viewport
-          inputRef.current.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-          });
-        } else {
-          console.error(
-            "scrollIntoView is not a function or inputRef.current is null"
-          );
-        }
-      }, 200); // Timeout to delay the scroll action
-    }
+    // if (ismobile) {
+    //   setTimeout(() => {
+    //     if (
+    //       inputRef.current &&
+    //       typeof inputRef.current.scrollIntoView === "function"
+    //     ) {
+    //       // Scroll the input element into view smoothly and center it in the viewport
+    //       inputRef.current.scrollIntoView({
+    //         behavior: "smooth",
+    //         block: "center",
+    //       });
+    //     } else {
+    //       console.error(
+    //         "scrollIntoView is not a function or inputRef.current is null"
+    //       );
+    //     }
+    //   }, 200); // Timeout to delay the scroll action
+    // }
   };
 
   const handleBlur = () => {
@@ -157,7 +171,12 @@ export const Chat = () => {
       setOpen(true);
 
       try {
+        // const result = await getCurrentUserData(userId);
+        // const userId=`${localStorage.getItem("email")}-${active}`
         const result = await getCurrentUserData(userId);
+        // const result = await getCurrentUserData("gpt440");
+
+        console.log("=======resule", result);
         const reversedata = result.reverse();
 
         setUserData(reversedata);
@@ -172,7 +191,7 @@ export const Chat = () => {
       hasRunRef.current = true;
       fetchData();
     }
-  }, [active]);
+  }, [active, userId]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -212,12 +231,6 @@ export const Chat = () => {
       fetchData();
     }
   }, [threadId]);
-  // const toggleButton = () => {
-  //   setIsToggled(!isToggled);
-  //   hasRunRef.current = false;
-  //   handleNewChat();
-  // };
-
   useEffect(() => {
     if (openDialog) {
       const { current: descriptionElement } = descriptionElementRef;
@@ -320,13 +333,21 @@ export const Chat = () => {
         ]);
         const costCalculator =
           calculateCost(
-            model === "gpt35turbo" ? 0.5 : model === "gpt440" ? 5 : 0.15,
+            model === "gpt-3.5-turbo" ? 0.5 : model === "gpt-4o" ? 5 : 0.15,
             response.tokkens.promptTokens
           ) +
           calculateCost(
-            model === "gpt35turbo" ? 1.5 : model === "gpt440" ? 15 : 0.6,
+            model === "gpt-3.5-turbo" ? 1.5 : model === "gpt-4o" ? 15 : 0.6,
             response.tokkens.completionTokens
           );
+        // calculateCost(
+        //   model === "gpt35turbo" ? 0.5 : model === "gpt440" ? 5 : 0.15,
+        //   response.tokkens.promptTokens
+        // ) +
+        // calculateCost(
+        //   model === "gpt35turbo" ? 1.5 : model === "gpt440" ? 15 : 0.6,
+        //   response.tokkens.completionTokens
+        // );
         setTokenCost({
           token: response.tokkens.totalTokens,
           cost: costCalculator,
@@ -396,9 +417,9 @@ export const Chat = () => {
     setIsUploading(true);
     try {
       const response = await axios.post(
-        // "http://localhost:3001/upload",
+        "http://localhost:3001/upload",
         // "https://legalbackedn2-aondtyyl6a-uc.a.run.app/upload",
-        "https://legalbackend-aondtyyl6a-uc.a.run.app/upload",
+        // "https://legalbackend-aondtyyl6a-uc.a.run.app/upload",
 
         formData,
         {
@@ -618,13 +639,22 @@ export const Chat = () => {
                           name={message.sender}
                           src={
                             message.sender === "assistant" &&
-                            active === "gpt440"
+                            // active === "gpt440"
+                            //   ? got40
+                            //   : message.sender === "assistant" &&
+                            //     active === "gpt4omini"
+                            //   ? gpt40mini
+                            //   : message.sender === "assistant" &&
+                            //     active === "gpt35turbo"
+                            //   ? gpt3
+                            //   : user
+                            active === " gpt-4o"
                               ? got40
                               : message.sender === "assistant" &&
-                                active === "gpt4omini"
+                                active === "gpt-4o-mini"
                               ? gpt40mini
                               : message.sender === "assistant" &&
-                                active === "gpt35turbo"
+                                active === "gpt-3.5-turbo"
                               ? gpt3
                               : user
                           }
@@ -660,7 +690,12 @@ export const Chat = () => {
                 ref={typingRef}
                 placeholder="Type message here"
                 onSend={handleSend}
-                style={{ paddingTop: "15px", order: 2, zIndex: 30 }}
+                style={{
+                  // paddingTop: "15px",
+                  paddingBottom: ismobile ? "56px" : "",
+                  order: 2,
+                  zIndex: 30,
+                }}
                 attachButton={true}
                 onAttachClick={handleAttachClick}
                 disabled={isTyping || isUploading}

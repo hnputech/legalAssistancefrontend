@@ -72,8 +72,8 @@ export const Analyzer = () => {
       if (data !== "") setData("");
 
       const response = await fetch(
-        `https://legalbackend-aondtyyl6a-uc.a.run.app/uploadFiles`,
-        // "http://localhost:3001/uploadFiles",
+        // `https://legalbackend-aondtyyl6a-uc.a.run.app/uploadFiles`,
+        "http://localhost:3001/uploadFiles",
         {
           method: "POST",
           body: formData,

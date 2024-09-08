@@ -6,26 +6,14 @@ import { SideBarLayout } from "../conponents/layouts/SideBarLayout";
 import { AllGeneratedTemplate } from "../conponents/table";
 import { EditTemplate } from "../conponents/templates/EditTemplate";
 import { Analyzer } from "../conponents/documentAnalyze/Analyzer";
-// export const router = createBrowserRouter([
-
-//   {
-//     path: "/",
-//     element: <Chat />,
-//   },
-// {
-//   path: "/template",
-//   element: <Template />,
-// },
-// {
-//   path: "/template/:templateId",
-//   element: <SellPurchase />,
-// },
-// ]);
+import { SignIn } from "../conponents/login/SignIn";
+import { SignUp } from "../conponents/login/SignUp";
+import ProtectedRoute from "./ProtectedRoute";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <SideBarLayout />,
+    element: <ProtectedRoute element={<SideBarLayout />} />,
     children: [
       {
         path: "",
@@ -52,5 +40,13 @@ export const router = createBrowserRouter([
         element: <Analyzer />,
       },
     ],
+  },
+  {
+    path: "/signin",
+    element: <SignIn />,
+  },
+  {
+    path: "/signup",
+    element: <SignUp />,
   },
 ]);

@@ -37,7 +37,7 @@ export const EditTemplate = () => {
       {isMobile ? (
         <ArrowBackIcon
           onClick={() => {
-            navigate("/AllGeneratedTemplate/testing123");
+            navigate(`/AllGeneratedTemplate/${localStorage.getItem("email")}`);
           }}
           style={{
             marginBottom: "10px",
