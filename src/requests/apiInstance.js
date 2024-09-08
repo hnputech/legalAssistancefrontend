@@ -1,9 +1,7 @@
 import axios from "axios";
 
 export const axioxInstance = axios.create({
-  baseURL: "http://localhost:3001/",
-  // baseURL: "https://legalbackedn2-aondtyyl6a-uc.a.run.app",
-  // baseURL: "https://legalbackend-aondtyyl6a-uc.a.run.app",
+  baseURL: "https://legalbackedn-login-585300090217.us-central1.run.app",
   headers: {
     "Content-Type": "application/json",
     // "x-auth-token": localStorage.getItem("token"),

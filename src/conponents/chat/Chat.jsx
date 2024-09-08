@@ -417,9 +417,7 @@ export const Chat = () => {
     setIsUploading(true);
     try {
       const response = await axios.post(
-        "http://localhost:3001/upload",
-        // "https://legalbackedn2-aondtyyl6a-uc.a.run.app/upload",
-        // "https://legalbackend-aondtyyl6a-uc.a.run.app/upload",
+        "https://legalbackedn-login-585300090217.us-central1.run.app/upload",
 
         formData,
         {

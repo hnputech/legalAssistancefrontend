@@ -9,6 +9,7 @@ import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
+import LogoutIcon from "@mui/icons-material/Logout";
 import ListItemText from "@mui/material/ListItemText";
 import { Outlet } from "react-router-dom";
 import chatIcon from "../../assets/chat.png";
@@ -176,6 +177,10 @@ export const SideBarLayout = () => {
                       handleLogout();
                     }}
                   >
+                    <ListItemIcon>
+                      <LogoutIcon />
+                    </ListItemIcon>
+
                     <ListItemText> Logout</ListItemText>
                   </MenuItem>
                 </Menu>
